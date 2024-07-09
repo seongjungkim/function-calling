@@ -5,334 +5,519 @@ import sys
 # https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/SimpleResponseSsml.json
 # https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/SimpleResponseTts.json
 
-welcome_json = {
-    "id": "d052d79c458d4769a452756f2edaa6ca",
-    "result": {
-        "source": "dialogflow",
-        "score": 1.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "Gemini 1.5 Pro는 폭넓은 작업을 망라하여 크기를 조정할 수 있도록 최적화된 중간 규모의 멀티모달 모델입니다. \r\n이 모델은 실험적인 1백만 개의 토큰을 포함하는 새로운 컨텍스트 창을 제공하며 Google AI Studio에서 시험 사용할 수 있습니다. Google AI Studio는 Gemini 모델을 사용해 개발할 수 있는 가장 빠른 방법이며, 개발자가 애플리케이션에 Gemini API를 손쉽게 통합할 수 있도록 지원합니다. Gemini 1.5 Pro는 180여 개 국가 및 지역에서 38개 언어로 제공됩니다.",
-                    "displayText": "Gemini 1.5 Pro는 폭넓은 작업을 망라하여 크기를 조정할 수 있도록 최적화된 중간 규모의 멀티모달 모델입니다. \r\n이 모델은 실험적인 1백만 개의 토큰을 포함하는 새로운 컨텍스트 창을 제공하며 Google AI Studio에서 시험 사용할 수 있습니다. Google AI Studio는 Gemini 모델을 사용해 개발할 수 있는 가장 빠른 방법이며, 개발자가 애플리케이션에 Gemini API를 손쉽게 통합할 수 있도록 지원합니다. Gemini 1.5 Pro는 180여 개 국가 및 지역에서 38개 언어로 제공됩니다."
-                }
-            ]
+galaxy_single_json = {
+    "query": "__MODEL_ID__",
+    "data": [
+    {
+        "모델": "갤럭시 S24 Ultra 자급제",
+        "모델번호": "SM-S928NZTNKOO",
+        "디스플레이": {
+            "크기 (Main Display)": "172.5 mm",
+            "해상도 (Main)": "3120 x 1440 (Quad HD+)",
+            "종류 (Main)": "Dynamic AMOLED 2X",
+            "색심도 (Main)": "16 M",
+            "최대 주사율 (Main)": "120 Hz"
         },
-        "suggestions": [
-            {
-                "title": "simple response"
-            },
-            {
-                "title": "browse carousel"
-            },
-            {
-                "title": "basic card"
-            },
-            {
-                "title": "Never mind"
-            }
-        ],
-        "payload": {
-            "intentName": "Default Welcome Intent",
-            "currentPage": "Start Page",
-            "parameters": {}
+        "프로세서": {
+            "CPU 속도": "3.39 GHz,3.1 GHz,2.9 GHz,2.2 GHz",
+            "CPU 종류": "Octa-Core"
+        },
+        "S펜 지원": "예",
+        "카메라": {
+            "후면 카메라 - 화소 (Multiple)": "200.0 MP + 50.0 MP + 12.0 MP + 10.0 MP",
+            "후면 카메라 - 조리개 값 (Multiple)": "F1.7 , F3.4 , F2.2 , F2.4",
+            "후면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - OIS": "예",
+            "후면 카메라 - 줌": "3배 및 5배 광학 줌, 광학 줌 수준의 2배 및 10배 줌(적응형 픽셀 센서 활용), 최대 100배 디지털 줌",
+            "전면 카메라 - 화소": "12.0 MP",
+            "전면 카메라 - 조리개 값": "F2.2", 
+            "전면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - 플래쉬": "예", 
+            "후면 카메라 - Laser AF 센서": "예",
+            "동영상 녹화 해상도": "UHD 8K (7680 x 4320) @30fps",
+            "슬로우 모션": "240fps @FHD,120fps @UHD"
+        },
+        "메모리/스토리지(저장 용량)": {
+            "메모리 (GB)": "12 GB",
+            "스토리지(저장 용량) (TB)": "1 TB",
+            "사용 가능한 스토리지(저장 용량) (GB)": "996.5 GB"
+        },
+        "네트워크": {
+            "SIM 개수": "Dual-SIM",
+            "SIM 슬롯 타입": "SIM 1 + eSIM / Dual eSIM"
+        },
+        "네트워크 (S/W 사용)": {
+            "2G GSM": "GSM850,GSM900,DCS1800,PCS1900",
+            "3G UMTS": "B1(2100),B2(1900),B4(AWS),B5(850),B8(900)",
+            "4G FDD LTE": "B1(2100),B2(1900),B3(1800),B4(AWS),B5(850),B7(2600),B8(900),B12(700),B13(700),B17(700),B18(800),B19(800),B20(800),B25(1900),B26(850),B28(700),B66(AWS-3)",
+            "4G TDD LTE": "B38(2600),B39(1900),B40(2300),B41(2500)",
+            "5G FDD Sub6": "N1(2100),N2(1900),N3(1800),N5(850),N7(2600),N8(900),N12(700),N20(800),N25(1900),N26(850),N28(700),N66(AWS-3)",
+            "5G TDD Sub6": "N38(2600),N40(2300),N41(2500),N77(3700),N78(3500)"
+        },
+        "연결": {
+            "USB 인터페이스": "USB Type-C",
+            "USB 버전": "USB 3.2 Gen 1",
+            "위치 기술": "GPS,Glonass,Beidou,Galileo,QZSS",
+            "이어잭": "USB Type-C",
+            "MHL": "아니오",
+            "Wi-Fi": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz+6GHz, HE160, MIMO, 1024-QAM",
+            "Wi-Fi Direct": "예",
+            "블루투스 버전": "Bluetooth v5.3",
+            "NFC": "예",
+            "UWB (Ultra-Wideband)": "예",
+            "PC 싱크": "Smart Switch (PC version)"
+        },
+        "운영체제": "Android",
+        "기본 사양": {
+            "색상": "티타늄 그레이",
+            "형태": "터치 바"
+        },
+        "센서": "가속도 센서,기압 센서,지문 센서,자이로 센서,지자기 센서,홀 센서,조도 센서,근접 센서",
+        "외관 사양": {
+            "크기(세로x가로x두께, mm)": "162.3 x 79.0 x 8.6",
+            "무게(g)": "232"
+        },
+        "배터리": {
+            "인터넷 사용 시간(LTE) (Hours)": "최대 27",
+            "인터넷 사용 시간(Wi-Fi) (Hours)": "최대 28",
+            "비디오 재생 시간 (Hours, Wireless)": "최대 30",
+            "배터리 용량(mAh, Typical)": "5000",
+            "교체 가능": "아니오",
+            "오디오 재생 시간 (Hours, Wireless)": "최대 95"
+        },
+        "오디오/비디오": {
+            "스테레오 지원": "예",
+            "동영상 지원 포맷": "MP4,M4V,3GP,3G2,AVI,FLV,MKV,WEBM",
+            "동영상 지원 해상도": "UHD 8K (7680 x 4320) @60fps",
+            "오디오 지원 포맷": "MP3,M4A,3GA,AAC,OGG,OGA,WAV,AMR,AWB,FLAC,MID,MIDI,XMF,MXMF,IMY,RTTTL,RTX,OTA,DFF,DSF,APE"
+        },
+        "서비스": {
+            "Gear 서포트": "갤럭시 버즈2 프로,갤럭시 버즈 프로,갤럭시 버즈 라이브,갤럭시 버즈+,갤럭시 버즈2,갤럭시 버즈,갤럭시 버즈 FE,갤럭시 핏2,갤럭시 핏e,갤럭시 핏,갤럭시 워치6,갤럭시 워치5,갤럭시 워치4,갤럭시 워치3,갤럭시 워치,갤럭시 워치 액티브2,갤럭시 워치 액티브",
+            "삼성 덱스 서포트": "지원",
+            "모바일 TV": "아니오",
+            "블루투스 보청기 지원": "보청기용 안드로이드 오디오 스트리밍(ASHA)",
+            "SmartThings 지원": "지원"
+        },
+        "상품 기본정보": {
+            "제품명": "5G NR 이동통신용 무선설비의 기기(3.5 GHz)(육상이동국의 송수신장치)",
+            "제조자/수입자": "삼성전자㈜",
+            "제조국가": "한국, 베트남",
+            "KC 인증 필 유무": "KC 인증 로고R-C-SEC-SMS928",
+            "동일모델의 출시년월": "24년 1월",
+            "A/S 책임자와 전화번호": "삼성전자서비스센터/1588-3366",
+            "품질보증기준": "결함·하자 등에 따른 소비자 피해에 대해서는 소비자분쟁해결기준(소비자기본법 제16조)에 따라 보상 가능"
+        }
+    }
+    ]
+}
+
+
+galaxy_list_json = {
+    "query": "__MODEL_ID__",
+    "specs": [
+    {
+        "시리즈": "갤럭시 S24",
+        "모델": "갤럭시 S24 Ultra 자급제",
+        "모델번호": "SM-S928NZTNKOO",
+        "디스플레이": {
+            "크기 (Main Display)": "172.5 mm",
+            "해상도 (Main)": "3120 x 1440 (Quad HD+)",
+            "종류 (Main)": "Dynamic AMOLED 2X",
+            "색심도 (Main)": "16 M",
+            "최대 주사율 (Main)": "120 Hz"
+        },
+        "프로세서": {
+            "CPU 속도": "3.39 GHz,3.1 GHz,2.9 GHz,2.2 GHz",
+            "CPU 종류": "Octa-Core"
+        },
+        "S펜 지원": "예",
+        "카메라": {
+            "후면 카메라 - 화소 (Multiple)": "200.0 MP + 50.0 MP + 12.0 MP + 10.0 MP",
+            "후면 카메라 - 조리개 값 (Multiple)": "F1.7 , F3.4 , F2.2 , F2.4",
+            "후면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - OIS": "예",
+            "후면 카메라 - 줌": "3배 및 5배 광학 줌, 광학 줌 수준의 2배 및 10배 줌(적응형 픽셀 센서 활용), 최대 100배 디지털 줌",
+            "전면 카메라 - 화소": "12.0 MP",
+            "전면 카메라 - 조리개 값": "F2.2", 
+            "전면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - 플래쉬": "예", 
+            "후면 카메라 - Laser AF 센서": "예",
+            "동영상 녹화 해상도": "UHD 8K (7680 x 4320) @30fps",
+            "슬로우 모션": "240fps @FHD,120fps @UHD"
+        },
+        "메모리/스토리지(저장 용량)": {
+            "메모리 (GB)": "12 GB",
+            "스토리지(저장 용량) (TB)": "1 TB",
+            "사용 가능한 스토리지(저장 용량) (GB)": "996.5 GB"
+        },
+        "네트워크": {
+            "SIM 개수": "Dual-SIM",
+            "SIM 슬롯 타입": "SIM 1 + eSIM / Dual eSIM"
+        },
+        "네트워크 (S/W 사용)": {
+            "2G GSM": "GSM850,GSM900,DCS1800,PCS1900",
+            "3G UMTS": "B1(2100),B2(1900),B4(AWS),B5(850),B8(900)",
+            "4G FDD LTE": "B1(2100),B2(1900),B3(1800),B4(AWS),B5(850),B7(2600),B8(900),B12(700),B13(700),B17(700),B18(800),B19(800),B20(800),B25(1900),B26(850),B28(700),B66(AWS-3)",
+            "4G TDD LTE": "B38(2600),B39(1900),B40(2300),B41(2500)",
+            "5G FDD Sub6": "N1(2100),N2(1900),N3(1800),N5(850),N7(2600),N8(900),N12(700),N20(800),N25(1900),N26(850),N28(700),N66(AWS-3)",
+            "5G TDD Sub6": "N38(2600),N40(2300),N41(2500),N77(3700),N78(3500)"
+        },
+        "연결": {
+            "USB 인터페이스": "USB Type-C",
+            "USB 버전": "USB 3.2 Gen 1",
+            "위치 기술": "GPS,Glonass,Beidou,Galileo,QZSS",
+            "이어잭": "USB Type-C",
+            "MHL": "아니오",
+            "Wi-Fi": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz+6GHz, HE160, MIMO, 1024-QAM",
+            "Wi-Fi Direct": "예",
+            "블루투스 버전": "Bluetooth v5.3",
+            "NFC": "예",
+            "UWB (Ultra-Wideband)": "예",
+            "PC 싱크": "Smart Switch (PC version)"
+        },
+        "운영체제": "Android",
+        "기본 사양": {
+            "색상": "티타늄 그레이",
+            "형태": "터치 바"
+        },
+        "센서": "가속도 센서,기압 센서,지문 센서,자이로 센서,지자기 센서,홀 센서,조도 센서,근접 센서",
+        "외관 사양": {
+            "크기(세로x가로x두께, mm)": "162.3 x 79.0 x 8.6",
+            "무게(g)": "232"
+        },
+        "배터리": {
+            "인터넷 사용 시간(LTE) (Hours)": "최대 27",
+            "인터넷 사용 시간(Wi-Fi) (Hours)": "최대 28",
+            "비디오 재생 시간 (Hours, Wireless)": "최대 30",
+            "배터리 용량(mAh, Typical)": "5000",
+            "교체 가능": "아니오",
+            "오디오 재생 시간 (Hours, Wireless)": "최대 95"
+        },
+        "오디오/비디오": {
+            "스테레오 지원": "예",
+            "동영상 지원 포맷": "MP4,M4V,3GP,3G2,AVI,FLV,MKV,WEBM",
+            "동영상 지원 해상도": "UHD 8K (7680 x 4320) @60fps",
+            "오디오 지원 포맷": "MP3,M4A,3GA,AAC,OGG,OGA,WAV,AMR,AWB,FLAC,MID,MIDI,XMF,MXMF,IMY,RTTTL,RTX,OTA,DFF,DSF,APE"
+        },
+        "서비스": {
+            "Gear 서포트": "갤럭시 버즈2 프로,갤럭시 버즈 프로,갤럭시 버즈 라이브,갤럭시 버즈+,갤럭시 버즈2,갤럭시 버즈,갤럭시 버즈 FE,갤럭시 핏2,갤럭시 핏e,갤럭시 핏,갤럭시 워치6,갤럭시 워치5,갤럭시 워치4,갤럭시 워치3,갤럭시 워치,갤럭시 워치 액티브2,갤럭시 워치 액티브",
+            "삼성 덱스 서포트": "지원",
+            "모바일 TV": "아니오",
+            "블루투스 보청기 지원": "보청기용 안드로이드 오디오 스트리밍(ASHA)",
+            "SmartThings 지원": "지원"
+        },
+        "상품 기본정보": {
+            "제품명": "5G NR 이동통신용 무선설비의 기기(3.5 GHz)(육상이동국의 송수신장치)",
+            "제조자/수입자": "삼성전자㈜",
+            "제조국가": "한국, 베트남",
+            "KC 인증 필 유무": "KC 인증 로고R-C-SEC-SMS928",
+            "동일모델의 출시년월": "24년 1월",
+            "A/S 책임자와 전화번호": "삼성전자서비스센터/1588-3366",
+            "품질보증기준": "결함·하자 등에 따른 소비자 피해에 대해서는 소비자분쟁해결기준(소비자기본법 제16조)에 따라 보상 가능"
         }
     },
-    "status": {
-        "code": 200,
-        "errorType": "success"
-    },
-    "genAi": True,
-    "eventTags": []
-}
-
-assistant_guide_json = {
-    "id": "b61b74b83ed144edb39cf27bb7a99322",
-    "result": {
-        "source": "dialogflow",
-        "score": 1.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "Gemini 챗봇은 광범위한 분야에 대화형 인공지능으로, 주로 질문 및 답변(Q\u0026A)과 정보 요약에 최적화되어 있습니다. \n사용자가 제공한 정보가 구체적이고 명확할수록, Gemini는 더 정확하고 유용한 답변을 제공할 수 있습니다.\n\n예를 들어, 좋은 질문은 \n\"이름, 나이, 과거병력, 복용중인 약물, 현재 불편한 곳을 포함한 환자 정보를 한 문단으로 요약해주세요.\"\n와 같이 특정 상황을 명확하게 설명합니다. \n반면, 불명확한 질문은 \"요약해주세요\"와 같이 너무 포괄적인 질문을 말합니다.\n\n질문은 구체적이고 명확하며, 한 번에 하나의 요청을 보내는 것이 좋습니다.\n\n\n답변을 이전 질문 (혹은 정보)를 참조하지 않고 새로 시작하려면, Reset 혹은 초기화라고 입력해주세요.\n원하지 않는 이전 내용을 포함한다면 Reset 혹은 초기화라고 입력해주세요.\n\n\n채팅 간 최근 4번의 채팅까지 현재 인지 및 참조해서 답변하도록 설계되어있습니다. (Reset의 경우 초기화) \n\n\n질문의 경우, 한글과 영어 두가지 모두 사용가능합니다.\n다만 답변의 경우, 영어로 답변하는 경향이 커, 한글로 받고 싶으시다면 추가로 \"Translate it in Korean\" 혹은 \"한글로 번역해주세요.\" 라고 입력해주세요. \n\n\n\n질문예시 1 :\nMedical Information : \n나이 : 55세 \n인종 : 백인\n성별 : 여성\n병력 : 5년 전 진단된 유방암, 현재 관해 중\n현재 약물 : 매일 타목시펜 20mg과 레트로졸 2.5mg을 복용중\n\n위 환자가 오른쪽 상단 가슴의 강한 통증을 느끼고 있습니다.\n환자의 정보와 통증 정도를 보았을때 가장 의심스러운 질병은 어떤 것인가요?\n\n질문예시 2 :\nWhat causes you to get ringworm?\n\n질문예시 3:\nQuestion 1: Which medication causes the maximum increase in prolactin level?\n(A) Risperidone\n(B) Clozapine\n(C) Olanzapine\n(D) Aripiprazole\n\n*질문예시 4:\nQ1) 환자는 52세 남성으로, 기존 질환인 2형 당뇨와 고혈압으로 인해 합병증이 의심되는 증상을 보이고 있습니다. 최근에는 피로감이 증가하고 시력 문제를 호소했습니다. 어떤 검사를 권장하나요?\nQ2) 심혈관 합병증 위험을 추가로 평가하기 위해 어떤 질문을 해야 할까요?\nQ3) 내용을 제 노트에 간단히 요약해 줄 수 있을까요?\n\n질문예시 4의 순서와 같이 진행할 경우에, 답변받은 내용과 입력한 내용에 대해서 노트의 형식으로 요약받을 수도 있습니다.",
-                    "displayText": "Gemini 챗봇은 광범위한 분야에 대화형 인공지능으로, 주로 질문 및 답변(Q\u0026A)과 정보 요약에 최적화되어 있습니다. \n사용자가 제공한 정보가 구체적이고 명확할수록, Gemini는 더 정확하고 유용한 답변을 제공할 수 있습니다.\n\n예를 들어, 좋은 질문은 \n\"이름, 나이, 과거병력, 복용중인 약물, 현재 불편한 곳을 포함한 환자 정보를 한 문단으로 요약해주세요.\"\n와 같이 특정 상황을 명확하게 설명합니다. \n반면, 불명확한 질문은 \"요약해주세요\"와 같이 너무 포괄적인 질문을 말합니다.\n\n질문은 구체적이고 명확하며, 한 번에 하나의 요청을 보내는 것이 좋습니다.\n\n\n답변을 이전 질문 (혹은 정보)를 참조하지 않고 새로 시작하려면, Reset 혹은 초기화라고 입력해주세요.\n원하지 않는 이전 내용을 포함한다면 Reset 혹은 초기화라고 입력해주세요.\n\n\n채팅 간 최근 4번의 채팅까지 현재 인지 및 참조해서 답변하도록 설계되어있습니다. (Reset의 경우 초기화) \n\n\n질문의 경우, 한글과 영어 두가지 모두 사용가능합니다.\n다만 답변의 경우, 영어로 답변하는 경향이 커, 한글로 받고 싶으시다면 추가로 \"Translate it in Korean\" 혹은 \"한글로 번역해주세요.\" 라고 입력해주세요. \n\n\n\n질문예시 1 :\nMedical Information : \n나이 : 55세 \n인종 : 백인\n성별 : 여성\n병력 : 5년 전 진단된 유방암, 현재 관해 중\n현재 약물 : 매일 타목시펜 20mg과 레트로졸 2.5mg을 복용중\n\n위 환자가 오른쪽 상단 가슴의 강한 통증을 느끼고 있습니다.\n환자의 정보와 통증 정도를 보았을때 가장 의심스러운 질병은 어떤 것인가요?\n\n질문예시 2 :\nWhat causes you to get ringworm?\n\n질문예시 3:\nQuestion 1: Which medication causes the maximum increase in prolactin level?\n(A) Risperidone\n(B) Clozapine\n(C) Olanzapine\n(D) Aripiprazole\n\n*질문예시 4:\nQ1) 환자는 52세 남성으로, 기존 질환인 2형 당뇨와 고혈압으로 인해 합병증이 의심되는 증상을 보이고 있습니다. 최근에는 피로감이 증가하고 시력 문제를 호소했습니다. 어떤 검사를 권장하나요?\nQ2) 심혈관 합병증 위험을 추가로 평가하기 위해 어떤 질문을 해야 할까요?\nQ3) 내용을 제 노트에 간단히 요약해 줄 수 있을까요?\n\n질문예시 4의 순서와 같이 진행할 경우에, 답변받은 내용과 입력한 내용에 대해서 노트의 형식으로 요약받을 수도 있습니다."
-                }
-            ]
+    {
+        "시리즈": "갤럭시 S24",
+        "모델": "갤럭시 S24 Ultra 자급제 (삼성닷컴/삼성 강남 전용컬러)",
+        "모델번호": "SM-S928NLBNKOO",
+        "디스플레이": {
+            "크기 (Main Display)": "172.5 mm",
+            "해상도 (Main)": "3120 x 1440 (Quad HD+)",
+            "종류 (Main)": "Dynamic AMOLED 2X",
+            "색심도 (Main)": "16 M",
+            "최대 주사율 (Main)": "120 Hz"
         },
-        "payload": {
-            "intentName": "chatbot_guide",
-            "currentPage": "Start Page",
-            "parameters": {}
+        "프로세서": {
+            "CPU 속도": "3.39 GHz,3.1 GHz,2.9 GHz,2.2 GHz",
+            "CPU 종류": "Octa-Core"
+        },
+        "S펜 지원": "예",
+        "카메라": {
+            "후면 카메라 - 화소 (Multiple)": "200.0 MP + 50.0 MP + 12.0 MP + 10.0 MP",
+            "후면 카메라 - 조리개 값 (Multiple)": "F1.7 , F3.4 , F2.2 , F2.4",
+            "후면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - OIS": "예",
+            "후면 카메라 - 줌": "3배 및 5배 광학 줌, 광학 줌 수준의 2배 및 10배 줌(적응형 픽셀 센서 활용), 최대 100배 디지털 줌",
+            "전면 카메라 - 화소": "12.0 MP",
+            "전면 카메라 - 조리개 값": "F2.2", 
+            "전면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - 플래쉬": "예", 
+            "후면 카메라 - Laser AF 센서": "예",
+            "동영상 녹화 해상도": "UHD 8K (7680 x 4320) @30fps",
+            "슬로우 모션": "240fps @FHD,120fps @UHD"
+        },
+        "메모리/스토리지(저장 용량)": {
+            "메모리 (GB)": "12 GB",
+            "스토리지(저장 용량) (TB)": "1 TB",
+            "사용 가능한 스토리지(저장 용량) (GB)": "996.5 GB"
+        },
+        "네트워크": {
+            "SIM 개수": "Dual-SIM",
+            "SIM 슬롯 타입": "SIM 1 + eSIM / Dual eSIM"
+        },
+        "네트워크 (S/W 사용)": {
+            "2G GSM": "GSM850,GSM900,DCS1800,PCS1900",
+            "3G UMTS": "B1(2100),B2(1900),B4(AWS),B5(850),B8(900)",
+            "4G FDD LTE": "B1(2100),B2(1900),B3(1800),B4(AWS),B5(850),B7(2600),B8(900),B12(700),B13(700),B17(700),B18(800),B19(800),B20(800),B25(1900),B26(850),B28(700),B66(AWS-3)",
+            "4G TDD LTE": "B38(2600),B39(1900),B40(2300),B41(2500)",
+            "5G FDD Sub6": "N1(2100),N2(1900),N3(1800),N5(850),N7(2600),N8(900),N12(700),N20(800),N25(1900),N26(850),N28(700),N66(AWS-3)",
+            "5G TDD Sub6": "N38(2600),N40(2300),N41(2500),N77(3700),N78(3500)"
+        },
+        "연결": {
+            "USB 인터페이스": "USB Type-C",
+            "USB 버전": "USB 3.2 Gen 1",
+            "위치 기술": "GPS,Glonass,Beidou,Galileo,QZSS",
+            "이어잭": "USB Type-C",
+            "MHL": "아니오",
+            "Wi-Fi": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz+6GHz, HE160, MIMO, 1024-QAM",
+            "Wi-Fi Direct": "예",
+            "블루투스 버전": "Bluetooth v5.3",
+            "NFC": "예",
+            "UWB (Ultra-Wideband)": "예",
+            "PC 싱크": "Smart Switch (PC version)"
+        },
+        "운영체제": "Android",
+        "기본 사양": {
+            "색상": "티타늄 그레이",
+            "형태": "터치 바"
+        },
+        "센서": "가속도 센서,기압 센서,지문 센서,자이로 센서,지자기 센서,홀 센서,조도 센서,근접 센서",
+        "외관 사양": {
+            "크기(세로x가로x두께, mm)": "162.3 x 79.0 x 8.6",
+            "무게(g)": "232"
+        },
+        "배터리": {
+            "인터넷 사용 시간(LTE) (Hours)": "최대 27",
+            "인터넷 사용 시간(Wi-Fi) (Hours)": "최대 28",
+            "비디오 재생 시간 (Hours, Wireless)": "최대 30",
+            "배터리 용량(mAh, Typical)": "5000",
+            "교체 가능": "아니오",
+            "오디오 재생 시간 (Hours, Wireless)": "최대 95"
+        },
+        "오디오/비디오": {
+            "스테레오 지원": "예",
+            "동영상 지원 포맷": "MP4,M4V,3GP,3G2,AVI,FLV,MKV,WEBM",
+            "동영상 지원 해상도": "UHD 8K (7680 x 4320) @60fps",
+            "오디오 지원 포맷": "MP3,M4A,3GA,AAC,OGG,OGA,WAV,AMR,AWB,FLAC,MID,MIDI,XMF,MXMF,IMY,RTTTL,RTX,OTA,DFF,DSF,APE"
+        },
+        "서비스": {
+            "Gear 서포트": "갤럭시 버즈2 프로,갤럭시 버즈 프로,갤럭시 버즈 라이브,갤럭시 버즈+,갤럭시 버즈2,갤럭시 버즈,갤럭시 버즈 FE,갤럭시 핏2,갤럭시 핏e,갤럭시 핏,갤럭시 워치6,갤럭시 워치5,갤럭시 워치4,갤럭시 워치3,갤럭시 워치,갤럭시 워치 액티브2,갤럭시 워치 액티브",
+            "삼성 덱스 서포트": "지원",
+            "모바일 TV": "아니오",
+            "블루투스 보청기 지원": "보청기용 안드로이드 오디오 스트리밍(ASHA)",
+            "SmartThings 지원": "지원"
+        },
+        "상품 기본정보": {
+            "제품명": "5G NR 이동통신용 무선설비의 기기(3.5 GHz)(육상이동국의 송수신장치)",
+            "제조자/수입자": "삼성전자㈜",
+            "제조국가": "한국, 베트남",
+            "KC 인증 필 유무": "KC 인증 로고R-C-SEC-SMS928",
+            "동일모델의 출시년월": "24년 1월",
+            "A/S 책임자와 전화번호": "삼성전자서비스센터/1588-3366",
+            "품질보증기준": "결함·하자 등에 따른 소비자 피해에 대해서는 소비자분쟁해결기준(소비자기본법 제16조)에 따라 보상 가능"
         }
     },
-    "status": {
-        "code": 200,
-        "errorType": "success"
-    },
-    "eventTags": []
-}
-
-test_json = {
-    "result": {
-        "source": "dialogflow",
-        "score": 0.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": " As a medical chatbot, I am designed to provide information and answer questions related to medical topics. If you have a specific medical question or concern, I can try to help you find the information you need.",
-                    "ssml": "",
-                    "displayText": " As a medical chatbot, I am designed to provide information and answer questions related to medical topics. If you have a specific medical question or concern, I can try to help you find the information you need."
-                }
-            ]
+    {
+        "시리즈": "갤럭시 S24",
+        "모델": "갤럭시 S24+ 자급제",
+        "모델번호": "SM-S926NZVEKOO",
+        "디스플레이": {
+            "크기 (Main Display)": "169.1 mm",
+            "해상도 (Main)": "3120 x 1440 (Quad HD+)",
+            "종류 (Main)": "Dynamic AMOLED 2X",
+            "색심도 (Main)": "16 M",
+            "최대 주사율 (Main)": "120 Hz"
         },
-        "suggestions": [
-            {
-                "title": "simple response"
-            },
-            {
-                "title": "browse carousel"
-            },
-            {
-                "title": "basic card"
-            },
-            {
-                "title": "Never mind"
-            }
-        ]
-    },
-    "status": {
-        "code": 200
-    },
-    "genAi": True,
-    "eventTags": []
-}
-
-# https://developers.google.com/assistant/df-asdk/simple-responses?hl=ko
-
-simple_response_json = {
-    "result": {
-        "source": "dialogflow",
-        "score": 0.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "간단한 응답은 채팅 풍선의 형태를 취하며 소리에 텍스트 음성 변환(TTS) 또는 음성 합성 마크업 언어 (SSML)를 사용합니다.\r\n\r\nTTS 텍스트는 기본적으로 채팅 풍선 콘텐츠로 사용됩니다. 텍스트의 시각적 측면이 필요에 맞는 경우 채팅 풍선의 표시 텍스트를 지정할 필요가 없습니다.\r\n\r\n대화 디자인 가이드라인을 검토하여 이러한 시각적 요소를 작업에 통합하는 방법을 알아볼 수도 있습니다.",
-                    "ssml": "",
-                    "displayText": " 간단한 응답은 채팅 풍선의 형태를 취하며 소리에 텍스트 음성 변환(TTS) 또는 음성 합성 마크업 언어 (SSML)를 사용합니다.\r\n\r\nTTS 텍스트는 기본적으로 채팅 풍선 콘텐츠로 사용됩니다. 텍스트의 시각적 측면이 필요에 맞는 경우 채팅 풍선의 표시 텍스트를 지정할 필요가 없습니다.\r\n\r\n대화 디자인 가이드라인을 검토하여 이러한 시각적 요소를 작업에 통합하는 방법을 알아볼 수도 있습니다."
-                }
-            ]
+        "프로세서": {
+            "CPU 속도": "3.2 GHz,2.9 GHz,2.6 GHz,1.95 GHz",
+            "CPU 종류": "Deca-Core"
         },
-        "suggestions": [
-            {
-                "title": "simple response"
-            },
-            {
-                "title": "browse carousel"
-            },
-            {
-                "title": "basic card"
-            },
-            {
-                "title": "Never mind"
-            }
-        ]
-    },
-    "status": {
-        "code": 200
-    },
-    "genAi": True,
-    "eventTags": []
-}
-
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/BasicCard.json
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/Suggestions.json
-# https://developers.google.com/assistant/df-asdk/rich-responses?hl=ko#BasicCardSamples
-
-basic_card_json = {
-    "result": {
-        "source": "dialogflow",
-        "score": 0.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "기본 카드는 주로 디스플레이용으로 사용합니다. 간결하고 사용자에게 핵심 (또는 요약) 정보를 제시하며 개발자가 선택할 경우 사용자가 자세히 알아볼 수 있도록 설계되었습니다 (웹링크 사용).",
-                    "ssml": "",
-                    "displayText": "기본 카드는 주로 디스플레이용으로 사용합니다. 간결하고 사용자에게 핵심 (또는 요약) 정보를 제시하며 개발자가 선택할 경우 사용자가 자세히 알아볼 수 있도록 설계되었습니다 (웹링크 사용)."
-                }
-            ]
+        "S펜 지원": "예",
+        "카메라": {
+            "후면 카메라 - 화소 (Multiple)": "50.0 MP + 10.0 MP + 12.0 MP",
+            "후면 카메라 - 조리개 값 (Multiple)": "F1.8 , F2.4 , F2.2",
+            "후면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - OIS": "예",
+            "후면 카메라 - 줌": "3배 광학 줌, 광학 줌 수준의 2배 줌(적응형 픽셀 센서 활용), 최대 30배 디지털 줌",
+            "전면 카메라 - 화소": "12.0 MP",
+            "전면 카메라 - 조리개 값": "F2.2", 
+            "전면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - 플래쉬": "예", 
+            "후면 카메라 - Laser AF 센서": "예",
+            "동영상 녹화 해상도": "UHD 8K (7680 x 4320) @30fps",
+            "슬로우 모션": "240fps @FHD,120fps @UHD"
         },
-        "basicCard": {
-            "title": "베이직카드 타이틀",
-            "subtitle": "베이직카드 서브타이틀",
-            "formattedText": "This is a basic card.  Text in a basic card can include \"quotes\" and\n    most other unicode characters including emojis.  Basic cards also support\n    some markdown formatting like *emphasis* or _italics_, **strong** or\n    __bold__, and ***bold itallic*** or ___strong emphasis___ as well as other\n    things like line  \nbreaks",
-            "image": {
-                "imageUri": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
-                "accessibilityText": "Google Logo"
-            },
-            "buttons": [
-                {
-                    "title": "Rich Response > Basic Card",
-                    "openUriAction": {
-                        "uri": "https://developers.google.com/assistant/df-asdk/rich-responses?hl=ko#basic_card"
-                    }
-                }
-            ]
+        "메모리/스토리지(저장 용량)": {
+            "메모리 (GB)": "12 GB",
+            "스토리지(저장 용량) (TB)": "512 GB",
+            "사용 가능한 스토리지(저장 용량) (GB)": "487.6 GB"
         },
-        "suggestions": [
-            {
-                "title": "browse carousel"
-            },
-            {
-                "title": "basic card"
-            },
-            {
-                "title": "Never mind"
-            }
-        ],
-        "linkOutSuggestion": {
-            "destinationName": "Website",
-            "url": "https://assistant.google.com"
+        "네트워크": {
+            "SIM 개수": "Dual-SIM",
+            "SIM 슬롯 타입": "SIM 1 + eSIM / Dual eSIM"
+        },
+        "네트워크 (S/W 사용)": {
+            "2G GSM": "GSM850,GSM900,DCS1800,PCS1900",
+            "3G UMTS": "B1(2100),B2(1900),B4(AWS),B5(850),B8(900)",
+            "4G FDD LTE": "B1(2100),B2(1900),B3(1800),B4(AWS),B5(850),B7(2600),B8(900),B12(700),B13(700),B17(700),B18(800),B19(800),B20(800),B25(1900),B26(850),B28(700),B66(AWS-3)",
+            "4G TDD LTE": "B38(2600),B39(1900),B40(2300),B41(2500)",
+            "5G FDD Sub6": "N1(2100),N2(1900),N3(1800),N5(850),N7(2600),N8(900),N12(700),N20(800),N25(1900),N26(850),N28(700),N66(AWS-3)",
+            "5G TDD Sub6": "N38(2600),N40(2300),N41(2500),N77(3700),N78(3500)"
+        },
+        "연결": {
+            "USB 인터페이스": "USB Type-C",
+            "USB 버전": "USB 3.2 Gen 1",
+            "위치 기술": "GPS,Glonass,Beidou,Galileo,QZSS",
+            "이어잭": "USB Type-C",
+            "MHL": "아니오",
+            "Wi-Fi": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz+6GHz, HE160, MIMO, 1024-QAM",
+            "Wi-Fi Direct": "예",
+            "블루투스 버전": "Bluetooth v5.3",
+            "NFC": "예",
+            "UWB (Ultra-Wideband)": "예",
+            "PC 싱크": "Smart Switch (PC version)"
+        },
+        "운영체제": "Android",
+        "기본 사양": {
+            "색상": "코발트 바이올렛",
+            "형태": "터치 바"
+        },
+        "센서": "가속도 센서,기압 센서,지문 센서,자이로 센서,지자기 센서,홀 센서,조도 센서,근접 센서",
+        "외관 사양": {
+            "크기(세로x가로x두께, mm)": "158.5 x 75.9 x 7.7",
+            "무게(g)": "196"
+        },
+        "배터리": {
+            "인터넷 사용 시간(LTE) (Hours)": "최대 26",
+            "인터넷 사용 시간(Wi-Fi) (Hours)": "최대 27",
+            "비디오 재생 시간 (Hours, Wireless)": "최대 31",
+            "배터리 용량(mAh, Typical)": "4900",
+            "교체 가능": "아니오",
+            "오디오 재생 시간 (Hours, Wireless)": "최대 92"
+        },
+        "오디오/비디오": {
+            "스테레오 지원": "예",
+            "동영상 지원 포맷": "MP4,M4V,3GP,3G2,AVI,FLV,MKV,WEBM",
+            "동영상 지원 해상도": "UHD 8K (7680 x 4320) @60fps",
+            "오디오 지원 포맷": "MP3,M4A,3GA,AAC,OGG,OGA,WAV,AMR,AWB,FLAC,MID,MIDI,XMF,MXMF,IMY,RTTTL,RTX,OTA,DFF,DSF,APE"
+        },
+        "서비스": {
+            "Gear 서포트": "갤럭시 버즈2 프로,갤럭시 버즈 프로,갤럭시 버즈 라이브,갤럭시 버즈+,갤럭시 버즈2,갤럭시 버즈,갤럭시 버즈 FE,갤럭시 핏2,갤럭시 핏e,갤럭시 핏,갤럭시 워치6,갤럭시 워치5,갤럭시 워치4,갤럭시 워치3,갤럭시 워치,갤럭시 워치 액티브2,갤럭시 워치 액티브",
+            "삼성 덱스 서포트": "지원",
+            "모바일 TV": "아니오",
+            "블루투스 보청기 지원": "보청기용 안드로이드 오디오 스트리밍(ASHA)",
+            "SmartThings 지원": "지원"
+        },
+        "상품 기본정보": {
+            "제품명": "5G NR 이동통신용 무선설비의 기기(3.5 GHz)(육상이동국의 송수신장치)",
+            "제조자/수입자": "삼성전자㈜",
+            "제조국가": "한국, 베트남",
+            "KC 인증 필 유무": "KC 인증 로고R-C-SEC-SMS928",
+            "동일모델의 출시년월": "24년 1월",
+            "A/S 책임자와 전화번호": "삼성전자서비스센터/1588-3366",
+            "품질보증기준": "결함·하자 등에 따른 소비자 피해에 대해서는 소비자분쟁해결기준(소비자기본법 제16조)에 따라 보상 가능"
         }
     },
-    "status": {
-        "code": 200
-    },
-    "genAi": True,
-    "eventTags": []
-}
-
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/BrowseCarousel.json
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/Suggestions.json
-# https://developers.google.com/assistant/df-asdk/rich-responses?hl=ko#BrowsingCarouselSamples
-
-browse_carousel_json = {
-    "result": {
-        "source": "dialogflow",
-        "score": 0.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "탐색 캐러셀은 사용자가 세로로 스크롤하고 컬렉션의 타일을 선택할 수 있는 리치 응답입니다. 탐색 캐러셀은 웹브라우저 (또는 모든 타일이 AMP를 지원하는 경우 AMP 브라우저)에서 선택한 타일을 열어 웹 콘텐츠용으로 특별히 설계되었습니다. 탐색 캐러셀은 나중에 찾아볼 수 있도록 사용자의 어시스턴트 표시 경로에도 유지됩니다.",
-                    "ssml": "",
-                    "displayText": "탐색 캐러셀은 사용자가 세로로 스크롤하고 컬렉션의 타일을 선택할 수 있는 리치 응답입니다. 탐색 캐러셀은 웹브라우저 (또는 모든 타일이 AMP를 지원하는 경우 AMP 브라우저)에서 선택한 타일을 열어 웹 콘텐츠용으로 특별히 설계되었습니다. 탐색 캐러셀은 나중에 찾아볼 수 있도록 사용자의 어시스턴트 표시 경로에도 유지됩니다."
-                }
-            ]
+    {
+        "시리즈": "갤럭시 S23",
+        "모델": "갤럭시 S23 FE 자급제",
+        "모델번호": "SM-S711NZPWKOO",
+        "디스플레이": {
+            "크기 (Main Display)": "163.1 mm",
+            "해상도 (Main)": "1080 x 2340 (FHD+)",
+            "종류 (Main)": "Dynamic AMOLED 2X",
+            "색심도 (Main)": "16 M",
+            "최대 주사율 (Main)": "120 Hz"
         },
-        "browseCarousel": {
-            "items": [
-                {
-                    "title": "samsung.com",
-                    "openUrlAction": {
-                        "url": "https://www.samsung.com/sec/"
-                    },
-                    "description": "삼성닷컴",
-                    "footer": "삼성닷컴",
-                    "image": {
-                        "imageUri": "https://cdn.worldvectorlogo.com/logos/samsung-8.svg",
-                        "accessibilityText": "samsung.com Logo"
-                    }
-                },
-                {
-                    "title": "Gemini 1.5",
-                    "openUrlAction": {
-                        "url": "https://developers.googleblog.com/ko/gemini-15-our-next-generation-model-now-available-for-private-preview-in-google-ai-studio/"
-                    },
-                    "description": "Google AI Studio에서 비공개 미리보기로 이용 가능한 차세대 모델",
-                    "footer": "Gemini",
-                    "image": {
-                        "imageUri": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Google_Gemini_logo.svg/344px-Google_Gemini_logo.svg.png",
-                        "accessibilityText": "Google Logo"
-                    }
-                }
-            ]
+        "프로세서": {
+            "CPU 속도": "2.8 GHz,2.5 GHz,1.8 GHz",
+            "CPU 종류": "Octa-Core",
+            "CPU": "삼성 엑시노스 2200"
         },
-        "suggestions": [
-            {
-                "title": "browse carousel"
-            },
-            {
-                "title": "basic card"
-            },
-            {
-                "title": "Never mind"
-            }
-        ],
-        "linkOutSuggestion": {
-            "destinationName": "Website",
-            "url": "https://assistant.google.com"
+        "S펜 지원": "예",
+        "카메라": {
+            "후면 카메라 - 화소 (Multiple)": "50.0 MP + 12.0 MP + 8.0 MP",
+            "후면 카메라 - 조리개 값 (Multiple)": "F1.8 , F2.2 , F2.4 ",
+            "후면 카메라 - 오토 포커스": "예",
+            "후면 카메라 - OIS": "예",
+            "후면 카메라 - 줌": "3배 광학줌, 최대 30배 디지털줌",
+            "전면 카메라 - 화소": "10.0 MP",
+            "전면 카메라 - 조리개 값": "F2.4", 
+            "전면 카메라 - 오토 포커스": "아니오",
+            "후면 카메라 - 플래쉬": "예", 
+            "동영상 녹화 해상도": "UHD 8K (7680 x 4320) @24fps",
+            "슬로우 모션": "960fps @HD,240fps @FHD"
+        },
+        "메모리/스토리지(저장 용량)": {
+            "메모리 (GB)": "8 GB",
+            "스토리지(저장 용량) (TB)": "256 GB",
+            "사용 가능한 스토리지(저장 용량) (GB)": "235.7 GB"
+        },
+        "네트워크": {
+            "SIM 개수": "Dual-SIM",
+            "SIM 슬롯 타입": "SIM 1 + Embedded SIM"
+        },
+        "네트워크 (S/W 사용)": {
+            "2G GSM": "GSM850,GSM900,DCS1800,PCS1900",
+            "3G UMTS": "B1(2100),B2(1900),B4(AWS),B5(850),B8(900)",
+            "4G FDD LTE": "B1(2100),B2(1900),B3(1800),B4(AWS),B5(850),B7(2600),B8(900),B12(700),B13(700),B17(700),B18(800),B19(800),B20(800),B25(1900),B26(850),B28(700),B66(AWS-3)",
+            "4G TDD LTE": "B38(2600),B39(1900),B40(2300),B41(2500)",
+            "5G FDD Sub6": "N1(2100),N2(1900),N3(1800),N5(850),N7(2600),N8(900),N12(700),N20(800),N25(1900),N26(850),N28(700),N66(AWS-3)",
+            "5G TDD Sub6": "N38(2600),N40(2300),N41(2500),N77(3700),N78(3500)"
+        },
+        "연결": {
+            "USB 인터페이스": "USB Type-C",
+            "USB 버전": "USB 3.2 Gen 1",
+            "위치 기술": "GPS,Glonass,Beidou,Galileo,QZSS",
+            "이어잭": "USB Type-C",
+            "MHL": "아니오",
+            "Wi-Fi": "802.11a/b/g/n/ac/ax 2.4GHz+5GHz+6GHz, HE160, MIMO, 1024-QAM",
+            "Wi-Fi Direct": "예",
+            "블루투스 버전": "Bluetooth v5.3",
+            "NFC": "예",
+            "UWB (Ultra-Wideband)": "예",
+            "PC 싱크": "Smart Switch (PC version)"
+        },
+        "운영체제": "Android",
+        "기본 사양": {
+            "색상": "코발트 바이올렛",
+            "형태": "터치 바"
+        },
+        "센서": "가속도 센서,기압 센서,지문 센서,자이로 센서,지자기 센서,홀 센서,조도 센서,근접 센서",
+        "외관 사양": {
+            "크기(세로x가로x두께, mm)": "158.5 x 75.9 x 7.7",
+            "무게(g)": "196"
+        },
+        "배터리": {
+            "인터넷 사용 시간(LTE) (Hours)": "최대 26",
+            "인터넷 사용 시간(Wi-Fi) (Hours)": "최대 27",
+            "비디오 재생 시간 (Hours, Wireless)": "최대 31",
+            "배터리 용량(mAh, Typical)": "4900",
+            "교체 가능": "아니오",
+            "오디오 재생 시간 (Hours, Wireless)": "최대 92"
+        },
+        "오디오/비디오": {
+            "스테레오 지원": "예",
+            "동영상 지원 포맷": "MP4,M4V,3GP,3G2,AVI,FLV,MKV,WEBM",
+            "동영상 지원 해상도": "UHD 8K (7680 x 4320) @60fps",
+            "오디오 지원 포맷": "MP3,M4A,3GA,AAC,OGG,OGA,WAV,AMR,AWB,FLAC,MID,MIDI,XMF,MXMF,IMY,RTTTL,RTX,OTA,DFF,DSF,APE"
+        },
+        "서비스": {
+            "Gear 서포트": "갤럭시 버즈2 프로,갤럭시 버즈 프로,갤럭시 버즈 라이브,갤럭시 버즈+,갤럭시 버즈2,갤럭시 버즈,갤럭시 버즈 FE,갤럭시 핏2,갤럭시 핏e,갤럭시 핏,갤럭시 워치6,갤럭시 워치5,갤럭시 워치4,갤럭시 워치3,갤럭시 워치,갤럭시 워치 액티브2,갤럭시 워치 액티브",
+            "삼성 덱스 서포트": "지원",
+            "모바일 TV": "아니오",
+            "블루투스 보청기 지원": "보청기용 안드로이드 오디오 스트리밍(ASHA)",
+            "SmartThings 지원": "지원"
+        },
+        "상품 기본정보": {
+            "제품명": "5G NR 이동통신용 무선설비의 기기(3.5 GHz)(육상이동국의 송수신장치)",
+            "제조자/수입자": "삼성전자㈜",
+            "제조국가": "한국, 베트남",
+            "KC 인증 필 유무": "KC 인증 로고R-C-SEC-SMS928",
+            "동일모델의 출시년월": "24년 1월",
+            "A/S 책임자와 전화번호": "삼성전자서비스센터/1588-3366",
+            "품질보증기준": "결함·하자 등에 따른 소비자 피해에 대해서는 소비자분쟁해결기준(소비자기본법 제16조)에 따라 보상 가능"
         }
-    },
-    "status": {
-        "code": 200
-    },
-    "genAi": True,
-    "eventTags": []
-}
-
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/BrowseCarousel.json
-# https://github.com/dialogflow/fulfillment-webhook-json/blob/master/responses/v2/ActionsOnGoogle/RichResponses/Suggestions.json
-# https://developers.google.com/assistant/df-asdk/rich-responses?hl=ko#BrowsingCarouselSamples
-
-carousel_select_json = {
-    "result": {
-        "source": "dialogflow",
-        "score": 0.0,
-        "simpleResponses": {
-            "simpleResponses": [
-                {
-                    "textToSpeech": "탐색 캐러셀은 사용자가 세로로 스크롤하고 컬렉션의 타일을 선택할 수 있는 리치 응답입니다. 탐색 캐러셀은 웹브라우저 (또는 모든 타일이 AMP를 지원하는 경우 AMP 브라우저)에서 선택한 타일을 열어 웹 콘텐츠용으로 특별히 설계되었습니다. 탐색 캐러셀은 나중에 찾아볼 수 있도록 사용자의 어시스턴트 표시 경로에도 유지됩니다.",
-                    "ssml": "",
-                    "displayText": "탐색 캐러셀은 사용자가 세로로 스크롤하고 컬렉션의 타일을 선택할 수 있는 리치 응답입니다. 탐색 캐러셀은 웹브라우저 (또는 모든 타일이 AMP를 지원하는 경우 AMP 브라우저)에서 선택한 타일을 열어 웹 콘텐츠용으로 특별히 설계되었습니다. 탐색 캐러셀은 나중에 찾아볼 수 있도록 사용자의 어시스턴트 표시 경로에도 유지됩니다."
-                }
-            ]
-        },
-        "carouselSelect": {
-            "items": [
-                {
-                    "title": "samsung.com",
-                    "openUrlAction": {
-                        "url": "https://www.samsung.com/sec/"
-                    },
-                    "description": "삼성닷컴",
-                    "footer": "삼성닷컴",
-                    "image": {
-                        "imageUri": "https://cdn.worldvectorlogo.com/logos/samsung-8.svg",
-                        "accessibilityText": "samsung.com Logo"
-                    }
-                },
-                {
-                    "title": "Gemini 1.5",
-                    "openUrlAction": {
-                        "url": "https://developers.googleblog.com/ko/gemini-15-our-next-generation-model-now-available-for-private-preview-in-google-ai-studio/"
-                    },
-                    "description": "Google AI Studio에서 비공개 미리보기로 이용 가능한 차세대 모델",
-                    "footer": "Gemini",
-                    "image": {
-                        "imageUri": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Google_Gemini_logo.svg/344px-Google_Gemini_logo.svg.png",
-                        "accessibilityText": "Google Logo"
-                    }
-                }
-            ]
-        },
-        "suggestions": [
-            {
-                "title": "25"
-            },
-            {
-                "title": "45"
-            },
-            {
-                "title": "Never mind"
-            }
-        ],
-        "linkOutSuggestion": {
-            "destinationName": "Website",
-            "url": "https://assistant.google.com"
-        }
-    },
-    "status": {
-        "code": 200
-    },
-    "genAi": True,
-    "eventTags": []
+    }
+    ]
 }
