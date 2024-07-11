@@ -34,8 +34,19 @@ git commit -m "dummy.py 파일 추가"
 git push -u tpcg master
 ```
 
+### For function calling at tpcg-datacollector project
+
 ```bash
 PROJECT_ID=tpcg-datacollector
+REGION=asia-northeast3
+APP=function-calling
+TAG=gcr.io/$PROJECT_ID/$APP
+```
+
+### For function calling at sam-poc project
+
+```bash
+PROJECT_ID=samsung-poc-425503
 REGION=asia-northeast3
 APP=function-calling
 TAG=gcr.io/$PROJECT_ID/$APP
@@ -51,6 +62,26 @@ gcloud run deploy $APP \
 --image $TAG \
 --platform managed \
 --region $REGION \
+--allow-unauthenticated
+```
+
+### For Dialogflow fulfillment at sam-poc project (with VPC)
+
+```bash
+PROJECT_ID=samsung-poc-425503
+REGION=asia-northeast3
+APP=dialogflow-fulfillment
+TAG=gcr.io/$PROJECT_ID/$APP
+```
+
+```bash
+gcloud run deploy $APP \
+--project $PROJECT_ID \
+--image $TAG \
+--platform managed \
+--region $REGION \
+--network default \
+--subnet default \
 --allow-unauthenticated
 ```
 

@@ -3,7 +3,10 @@ from fastapi.responses import Response, JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 import json
+import os
+
 import routers.dummy as dummy
+from utils import bigqueryapi, postgresqlapi
 
 router = APIRouter(
   prefix="",
@@ -51,7 +54,59 @@ async def galaxy_spec(request: Request):
     model = data.get("model")
     print('model', model)
 
-    response = dummy.galaxy_list_json
+    query = f"""SELECT * FROM `samsung-poc-425503.rubicon_poc.smartphone_spec_2324`
+    WHERE `모델코드` LIKE '%{model}%' OR `라인업` LIKE '%{model}%' OR `시리즈` LIKE '%{model}%' OR `상품명` LIKE '%{model}%'
+    """
+
+    # BigQuery 연동
+    app_dir = os.environ['APP_HOME']
+    bigquery_api = bigqueryapi.BigQueryAPI(service_account=f'{app_dir}/credentials/samsung-poc.json')
+    dataframe = bigquery_api.query(query)
+    print('dataframe', dataframe)
+
+    # AlloyDB 연동
+    """ """
+    ALLOY_IP="10.40.160.2"
+    ALLOY_USER="postgres"
+    ALLOY_PASS="tpcg1234"
+    ALLOY_PORT="5432"
+    ALLOY_NAME="postgres"
+    """ """
+    postgresql_api = postgresqlapi.PostgresqlAPI(
+        host=ALLOY_IP, 
+        port=ALLOY_PORT, 
+        user=ALLOY_USER, 
+        password=ALLOY_PASS, 
+        dbname=ALLOY_NAME)
+    
+    #GALAXY, Galaxy, 갤럭시, 갤 -> 유의어 처리부분 필요
+    models = ['Galaxy S24', '갤럭시 S24']
+    query = f"""SELECT
+        *
+    FROM
+        pivot_spec_s23
+    WHERE
+        "모델코드" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "라인업" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "시리즈" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "상품명" SIMILAR TO '%{'%|%'.join(models)}%'
+    UNION
+    SELECT
+        *
+    FROM
+        pivot_spec_s24
+    WHERE
+        "모델코드" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "라인업" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "시리즈" SIMILAR TO '%{'%|%'.join(models)}%' OR
+        "상품명" SIMILAR TO '%{'%|%'.join(models)}%'
+    """
+    print('query', query)
+    row = postgresql_api.query_all(query)
+    print(row)
+
+    #response = dummy.galaxy_list_json
+    response = dummy.galaxy_list_camera_json
     obj_str = json.dumps(response).replace('__MODEL_ID__', model)
     response = json.loads(obj_str)
 
@@ -71,7 +126,8 @@ async def compare_galaxy_spec(request: Request):
     if "," in model:
         print('models', model.split(','))
 
-    response = dummy.galaxy_list_json
+    #response = dummy.galaxy_list_json
+    response = dummy.galaxy_list_camera_json
     obj_str = json.dumps(response).replace('__MODEL_ID__', model)
     response = json.loads(obj_str)
 

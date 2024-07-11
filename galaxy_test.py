@@ -17,9 +17,14 @@ def generate_function_call(prompt: str, project_id: str, location: str) -> tuple
     vertexai.init(project=project_id, location=location)
 
     # Initialize Gemini model
-    #model_type = "gemini-1.5-pro-001"
-    model_type = "gemini-1.5-flash-001"
+    model_type = "gemini-1.5-pro-001"
+    #model_type = "gemini-1.5-flash-001"
     model = GenerativeModel(model_type)
+
+    """
+    gemini-1.5-flash-001
+    google.api_core.exceptions.InvalidArgument: 400 Unable to submit request because the forced function calling (mode = ANY) is only supported for Gemini 1.5 Pro models. Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling
+    """
 
     # Specify a function declaration and parameters for an API request
     get_galaxy_spec_func = FunctionDeclaration(
@@ -73,6 +78,13 @@ def generate_function_call(prompt: str, project_id: str, location: str) -> tuple
         )
     )
 
+    tool_config = ToolConfig(
+        function_calling_config=ToolConfig.FunctionCallingConfig(
+            #mode=ToolConfig.FunctionCallingConfig.Mode.AUTO,  # The default model behavior. The model decides whether to predict a function call or a natural language response.
+            mode=ToolConfig.FunctionCallingConfig.Mode.ANY,
+        )
+    )
+
     # Send the prompt and instruct the model to generate content using the Tool that you just created
     response = model.generate_content(
         user_prompt_content,
@@ -85,10 +97,15 @@ def generate_function_call(prompt: str, project_id: str, location: str) -> tuple
     # Check the function name that the model responded with, and make an API call to an external system
     function_call_type = response.candidates[0].content.parts[0].function_call.name
 
-    base_api_url = "https://function-calling-phdovlv6aa-du.a.run.app"
+    #TPCG-DataCollector
+    #base_api_url = "https://function-calling-phdovlv6aa-du.a.run.app"
+    #samsung-poc
+    #base_api_url = "https://function-calling-jr6kniykka-du.a.run.app"
+    base_api_url = "https://dialogflow-fulfillment-jr6kniykka-du.a.run.app"
     #base_api_url = "http://localhost:8080"
 
-    print('function_call_type', function_call_type)
+    print('prompt:', prompt)
+    print('function_call_type:', function_call_type)
     if (
         function_call_type == "get_galaxy_spec"
     ):
@@ -113,7 +130,7 @@ def generate_function_call(prompt: str, project_id: str, location: str) -> tuple
         #response = requests.post(galaxy_api_url, data=json.dumps(data))
         response = requests.post(galaxy_api_url, headers=headers, data=json.dumps(data))
         #print('response', response)
-        print('api_response', response.content)
+        #print('api_response', response.content)
         api_response = response.content
 
         # In this example, we'll use synthetic data to simulate a response payload from an external API
@@ -182,16 +199,19 @@ summary, response = generate_function_call(
     #prompt="갤럭시 S24 카메라 정보를 가르쳐줘",
     #prompt="갤럭시 S24 카메라 정보를 설명해줘",
     #prompt="SM-S926NZVEKOO 카메라 정보를 설명해줘",
-    prompt="갤럭시 S24 정보를 가르쳐줘",
+    #prompt="갤럭시 S24 정보를 가르쳐줘",
+    #prompt="갤 S24 정보를 가르쳐줘",
+    #prompt="갤S24 정보를 가르쳐줘",
     #prompt="갤럭시 S24 카메라 정보를 비교해 줘", 
-    #prompt="갤럭시 S24과 S23 카메라 스펙을 비교해 줘", 
+    #prompt="갤럭시 S24과 S23 카메라 스펙을 비교해 줘",
+    prompt="갤 S24과 S23 카메라 스펙을 비교해 줘",
     #prompt="갤럭시 SM-S711NZPWKOO과 SM-S926NZVEKOO 카메라 스펙을 비교해 줘",
     #prompt="갤럭시 SM-S711NZPWKOO과 SM-S926NZVEKOO의 특장점을 비교해 줘",
     project_id=PROJECT_ID, 
     location=REGION
 )
 print(summary)
-print(response)
+#print(response)
 
 """
         response_json = {
