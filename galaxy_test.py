@@ -12,6 +12,8 @@ from vertexai.generative_models import (
     ToolConfig,
 )
 
+#https://colab.research.google.com/drive/1hySdEtHY_6-rkdoovmzL_4XoTT-VxXxg?resourcekey=0-Y-byjubldalGDutCVNEheA#scrollTo=TUFi7L8lCscV
+
 def generate_function_call(prompt: str, project_id: str, location: str) -> tuple:
     # Initialize Vertex AI
     vertexai.init(project=project_id, location=location)

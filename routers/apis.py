@@ -16,6 +16,22 @@ router = APIRouter(
 
 @router.get("/")
 async def home():
+    import google.auth
+    import google.auth.transport.requests
+
+    creds, project = google.auth.default(scopes=['https://www.googleapis.com/auth/cloud-platform'])
+    print('creds', creds, 'project', project)
+
+    # creds.valid is False, and creds.token is None
+    # Need to refresh credentials to populate those
+
+    auth_req = google.auth.transport.requests.Request()
+    creds.refresh(auth_req)
+
+    # Now you can use creds.token
+    print('service_account_email', creds.service_account_email)
+    print('token', creds.token)
+
     return {"message": "Hell World"}
 
 @router.post("/weather", response_class=JSONResponse)
