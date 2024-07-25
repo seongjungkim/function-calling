@@ -120,7 +120,7 @@ async def solution(request: Request):
 
 
 @router.post("/get_release_date")
-async def solution(request: Request):
+async def get_release_date(request: Request):
     """
     https://medium.com/google-cloud/building-of-python-webhook-to-integrate-the-cloudsql-database-with-chatbot-in-dialogflow-cx-e6a07c45f6fe
     """
@@ -139,10 +139,11 @@ async def solution(request: Request):
     print("product", product, ",", "attribute", attribute)
 
     result = invoke(query)
+    print('result', result, type(result))
     #result = None
-    #if type(results) == dict:
+    #if type(results) is dict:
     #    result = results
-    #elif type(results) == list:
+    #elif type(results) is list:
     #    result = results[0]
     
     companies = result.get("companies")
