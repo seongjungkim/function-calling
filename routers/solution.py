@@ -138,17 +138,22 @@ async def solution(request: Request):
     product = session_info["parameters"].get("product-temp")
     print("product", product, ",", "attribute", attribute)
 
-    results = invoke(query)
-    for result in results:
-        companies = result.get("companies")
-        models = result.get("models")
-        release_date_yesno = result.get("release_date_yesno")
-        samsung_product_yesno = result.get("samsung_product_yesno")
-        notsamsung_product_yesno = result.get("notsamsung_product_yesno")
-        required_feature = result.get("required_feature")
-        sensitive_words_yesno = result.get("sensitive_words_yesno")
-        print(companies, models, release_date_yesno, samsung_product_yesno, 
-            notsamsung_product_yesno, required_feature, sensitive_words_yesno)
+    result = invoke(query)
+    #result = None
+    #if type(results) == dict:
+    #    result = results
+    #elif type(results) == list:
+    #    result = results[0]
+    
+    companies = result.get("companies")
+    models = result["models"]
+    release_date_yesno = result["release_date_yesno"]
+    samsung_product_yesno = result["samsung_product_yesno"]
+    notsamsung_product_yesno = result["notsamsung_product_yesno"]
+    required_feature = result["required_feature"]
+    sensitive_words_yesno = result["sensitive_words_yesno"]
+    print(companies, models, release_date_yesno, samsung_product_yesno, 
+        notsamsung_product_yesno, required_feature, sensitive_words_yesno)
 
     # AlloyDB 연동
     """ """
@@ -170,14 +175,14 @@ async def solution(request: Request):
     FROM
         "Sample_s23"
     WHERE
-        "펫네임" SIMILAR TO '%{'%|%'.join(product)}%'
+        "펫네임" SIMILAR TO '%{'%|%'.join(models)}%'
     UNION
     SELECT
         DISTINCT "펫네임", "출시일"
     FROM
         "Sample_s24"
     WHERE
-        "펫네임" SIMILAR TO '%{'%|%'.join(product)}%'
+        "펫네임" SIMILAR TO '%{'%|%'.join(models)}%'
     ORDER BY "펫네임"
     """
     print('query', query)
@@ -205,6 +210,8 @@ async def solution(request: Request):
     return fulfillment_response
 
 def invoke(question):
+    from mdextractor import extract_md_blocks
+
     #https://ai.google.dev/gemini-api/docs/json-mode?hl=ko&lang=python
 
     PROJECT_ID = "samsung-poc-425503"
@@ -216,8 +223,8 @@ def invoke(question):
     prompt = f"""
     당신은 제품 정보를 분석하는 전문 AI입니다.
     문에서 회사 목록, 제품 모델 목록, 제품 모델별로 출시일의 질문여부, 
-    답변으로 요구하는 특성이 무엇인지, 삼성전자 제품인지, 삼성전자 이외 제품 포함여부, 민간단어 포함여부, 분류해주세요. 
-    삼성전자 제품이면 대표 모델명으로 매핑해 주세요. 예제: ["갤럭시 S24", "S24", "갤럭시 24",  "갤24"] -> "갤럭시 S24"
+    답변으로 요구하는 특성이 무엇인지, 삼성전자 제품인지, 삼성전자 이외 제품 포함여부, 민감단어 포함여부, 분류해주세요. 
+    삼성전자 제품이면 대표 모델명으로 변경해 주세요. 예제: ["갤럭시 S24", "S24", "갤럭시 24",  "갤24"] -> "갤럭시 S24"
     
     답변을 다음 key를 가진 JSON 형식으로 만들어주세요.
 
@@ -236,6 +243,8 @@ def invoke(question):
     ).replace("*", "")
     print('response_text', response_text)
 
-    response_text = re.sub(r"```[^\S\r\n]*[a-z]*\n.*?\n```", '', response_text, 0, re.DOTALL)
-    print('response_text', response_text)
-    return json.loads(response_text)
+    blocks = extract_md_blocks(response_text)
+    print('response_text', blocks[0], type(blocks[0]))
+    json_obj = json.loads(blocks[0])
+    print('json_obj', json_obj, type(json_obj))
+    return json_obj
