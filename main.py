@@ -7,7 +7,7 @@ import uuid
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.staticfiles import StaticFiles
-from routers import auth, apis, views, chatbot, order
+from routers import auth, apis, views, chatbot, order, solution
 
 from google.cloud import storage
 
@@ -18,3 +18,4 @@ app.include_router(views.router)
 app.include_router(apis.router)
 app.include_router(chatbot.router)
 app.include_router(order.router)
+app.include_router(solution.router)
