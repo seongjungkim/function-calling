@@ -184,15 +184,31 @@ async def compare_products(request: Request):
         dbname=ALLOY_NAME)
     
     columns = []
-    for key in all_columns.keys():
-        print(key)
-        if key in ["운영체제", "네트워크"]:
-            continue
-        columns = columns + all_columns[key]
+    if len(feature) == 0:
+        for key in all_columns.keys():
+            #print(key)
+            if key in ["운영체제", "네트워크"]:
+                continue
+            columns = columns + all_columns[key]
+    elif isinstance(feature, str):
+        try:
+            columns = all_columns[feature]
+        except KeyError as e:
+            feature = find_similarity_feature(feature, all_columns)
+            columns = all_columns[feature]
+    elif isinstance(feature, list):
+        for key in feature:
+            try:
+                columns = columns + all_columns[key]
+            except KeyError as e:
+                key = find_similarity_feature(key, all_columns)
+                columns = columns + all_columns[key]
 
     columns.append("시리즈")
-    columns.append("모델코드")
+    if len(models) > 0: 
+        columns.append("모델코드")
     print('columns', '","'.join(columns))
+    print("products", '","'.join(products))
     print('models', '","'.join(models))
     #series = []
     #models = []
@@ -202,7 +218,7 @@ async def compare_products(request: Request):
 FROM
     pivot_spec_s23
 WHERE
-    {("--" if len(series) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(series)}%'
+    {("--" if len(products) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(products)}%'
     {("--" if len(models) == 0 else "")}"모델코드" IN ('{"','".join(models)}')
 UNION
 SELECT
@@ -210,7 +226,7 @@ SELECT
 FROM
     pivot_spec_s24
 WHERE
-    {("--" if len(series) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(series)}%'
+    {("--" if len(products) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(products)}%'
     {("--" if len(models) == 0 else "")}"모델코드" IN ('{"','".join(models)}')
 ORDER BY "시리즈"
 """
@@ -353,3 +369,36 @@ def generate_avoidance(question):
 
     return None
 
+def word2vec(word):
+    from collections import Counter
+    from math import sqrt
+
+    # count the characters in word
+    cw = Counter(word)
+    # precomputes a set of the different characters
+    sw = set(cw)
+    # precomputes the "length" of the word vector
+    lw = sqrt(sum(c*c for c in cw.values()))
+
+    # return a tuple
+    return cw, sw, lw
+
+def cosdis(v1, v2):
+    # which characters are common to the two words?
+    common = v1[1].intersection(v2[1])
+    # by definition of cosine distance we have
+    return sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
+
+def find_similarity_feature(feature, columns):
+    va = word2vec(feature)
+
+    similarity_feature = None
+    max_sim = 0
+    for key in columns.keys():
+        vb = word2vec(key)
+        sim = cosdis(va,vb)
+        print("key", key, sim)
+        max_sim, similarity_feature = (sim, key) if sim > max_sim \
+            else (max_sim, similarity_feature)
+
+    return similarity_feature
