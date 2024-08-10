@@ -137,13 +137,13 @@ async def compare_products(request: Request):
         "디스플레이_크기 (Sub)", "디스플레이_해상도 (Sub)", "디스플레이_종류 (Sub)", "디스플레이_색심도 (Sub)", "디스플레이_최대 주사율 (Main)"],
     "프로세서": ["프로세서_CPU 속도", "프로세서_CPU 종류", "프로세서_CPU"],
     "카메라": ["카메라_후면 카메라 - 화소 (Multiple)", "카메라_후면 카메라 - 조리개 값 (Multiple)", "카메라_후면 카메라 - 오토 포커스", 
-        "카메라_후면 카메라 - OIS", "카메라_후면 카메라 줌", "카메라_후면 카메라 - 줌", "카메라_후면 카메라 - Laser AF 센서", 
-        "카메라_전면 카메라 - 조리개 값", "카메라_전면 카메라 - 오토 포커스",
-        "카메라_전면 카메라 - OIS", "카메라_후면 카메라 - 플래쉬", "카메라_전면 카메라 - 플래쉬", "카메라_동영상 녹화 해상도",
+        "카메라_후면 카메라 - OIS", "카메라_후면 카메라 - 줌", "카메라_후면 카메라 - Laser AF 센서", "카메라_후면 카메라 - 플래쉬", 
+        "카메라_전면 카메라 - 조리개 값", "카메라_전면 카메라 - 오토 포커스", "카메라_전면 카메라 - OIS",
+        "카메라_전면 카메라 - 플래쉬", "카메라_동영상 녹화 해상도",
         "카메라_커버 카메라 - 화소", "카메라_커버 카메라 - 조리개 값", "카메라_커버 카메라 - 오토 포커스", 
         "카메라_언더 디스플레이 카메라 - 화소", "카메라_언더 디스플레이 카메라 - 조리개 값", "카메라_언더 디스플레이 카메라 - 오토 포커스", 
         "카메라_언더 디스플레이 카메라 - OIS",
-        "카메라_슬로우 모션"],
+        "카메라_슬로우 모션"], #, "카메라_후면 카메라 줌"
     "메모리/스토리지": ["메모리/스토리지(저장 용량)_메모리 (GB)", "메모리/스토리지(저장 용량)_스토리지(저장 용", 
         "메모리/스토리지(저장 용량)_사용 가능한 스토", "메모리/스토리지(저장 용량)_외장 스토리지(저"],
     "네트워크": ["네트워크_SIM 개수", "네트워크_SIM 사이즈", "네트워크_SIM 슬롯 타입", "네트워크 (S/W 사용)_2G GSM",
@@ -154,8 +154,8 @@ async def compare_products(request: Request):
     "기본": ["기본 사양_색상", "기본 사양_형태"],
     "외관": ["외관 사양_크기(세로x가로x두께, mm)", "외관 사양_무게(g)", "외관 사양_접힌 상태시 크기(세로x가로x두께, mm)"],
     "배터리": ["배터리_인터넷 사용 시간(LTE) (Hours)", "배터리_인터넷 사용 시간(Wi-Fi) (Hours)", "배터리_비디오 재생 시간 (Hours)", 
-        "배터리_배터리 용량(mAh, Typical)", "배터리_교체 가능", "배터리_오디오 재생 시간 (Hours)", "배터리_연속 통화시간(4G LTE) (Hours)",
-        "배터리_비디오 재생 시간 (Hours, Wireless)", "배터리_오디오 재생 시간 (Hours, Wireless)"],
+        "배터리_오디오 재생 시간 (Hours)", "배터리_연속 통화시간(4G LTE) (Hours)",
+        "배터리_비디오 재생 시간 (Hours, Wireless)", "배터리_오디오 재생 시간 (Hours, Wireless)"], #"배터리_배터리 용량(mAh, Typical)", "배터리_교체 가능", 
     "오디오/비디오": ["오디오/비디오_스테레오 지원", "오디오/비디오_동영상 지원 포맷", "오디오/비디오_동영상 지원 해상도", "오디오/비디오_오디오 지원 포맷"],
     "서비스": ["서비스_Gear 서포트", "서비스_삼성 덱스 서포트", "서비스_모바일 TV", "서비스_블루투스 보청기 지원", "서비스_SmartThings 지원"],
     }
@@ -188,7 +188,7 @@ async def compare_products(request: Request):
     if len(feature) == 0:
         for key in all_columns.keys():
             #print(key)
-            if key in ["운영체제", "네트워크"]:
+            if key in ["운영체제", "기본", "네트워크", "서비스", "센서", "연결", "오디오/비디오"]:
                 continue
             columns = columns + all_columns[key]
     elif isinstance(feature, str):
@@ -233,12 +233,12 @@ ORDER BY "시리즈"
 """
     print('query', query)
     rows = postgresql_api.query_all(query)
-    print(rows, type(rows))
+    #print(rows, type(rows))
 
     message = "Fulfillment Webhook / Product Comparison"
     data = []
     for row in rows:
-        print(row)
+        #print(row)
         #model, release_date = row
         #dict = {"model": model, "release_date": release_date}
         data.append(','.join(row))
