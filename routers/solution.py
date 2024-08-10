@@ -16,6 +16,7 @@ from langchain_community.retrievers import (
 )
 
 import routers.dummy as dummy
+import routers.avoidance as avoidance
 
 from utils import bigqueryapi, postgresqlapi
 
@@ -161,7 +162,7 @@ async def get_release_date(request: Request):
 
     if othercompany_product_yesno and \
         len(othercompany_models) > 0:
-        generate_avoidance(' '.join(othercompany_models))
+        avoidance.generate_avoidance(' '.join(othercompany_models))
 
     fulfillment_response = {
         "fulfillment_response": {
@@ -215,49 +216,6 @@ def check_release_date(question):
     json_obj = json.loads(blocks[0])
     print('json_obj', json_obj, type(json_obj))
     return json_obj
-
-def generate_avoidance(question):
-    #https://ai.google.dev/api/generate-content?hl=ko#text
-    prompt = f"""
-    당신은 삼성 갤럭시 S 시리즈 전문 비서로 민감한 질문에 대해서 답변을 해주는 AI Assistant 입니다.
-    아래 마지막 고객의 답변을 바탕으로 매끄럽게 민감질문을 회피해주세요.
-
-    질문의 정보에 대한건 드릴 수 없는 정보라고 사과하며 갤럭시 S 시리즈에 대해 궁금하신 것이 있다면 질문해달라고 답변해주세요.
-    {question}
-    """
-
-    PROJECT_ID = "samsung-poc-425503"
-    LOCATION = "asia-northeast3"
-    vertexai.init(project=PROJECT_ID, location=LOCATION)
-
-    model_name = "gemini-1.5-flash-001"
-    model = GenerativeModel(model_name)
-
-    generation_config = {
-        "max_output_tokens": 8192,
-        "temperature": 1,
-        "top_p": 0.95,
-    }
-
-    safety_settings = {
-        generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    }
-
-    try:
-        response = model.generate_content(
-            [prompt],
-            generation_config=generation_config,
-            safety_settings=safety_settings,
-            #stream=True,
-        )
-
-        print(response.text)
-    except Exception as e:
-        print(e)
-
 
 """
     From Dialogflow CX

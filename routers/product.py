@@ -17,6 +17,7 @@ from langchain_community.retrievers import (
 
 import routers.dummy as dummy
 import routers.prompts as prompts
+import routers.avoidance as avoidance
 
 from utils import bigqueryapi, postgresqlapi
 
@@ -116,7 +117,7 @@ async def compare_products(request: Request):
     print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
     if other_product_yesno == "yes" or \
         (isinstance(other_product_yesno, bool) and other_product_yesno):
-        avoidance_result = generate_avoidance(question)
+        avoidance_result = avoidance.generate_avoidance(question)
         print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
         fulfillment_response = {
             "fulfillment_response": {
@@ -293,46 +294,6 @@ def generate_comparison(question, columns, data):
     prompt = prompt.replace("##COLUMNS##", ",".join(columns))
     prompt = prompt.replace("##DATA##", "\n".join(data))
     print("Generation Prompt", prompt)
-
-    PROJECT_ID = "samsung-poc-425503"
-    LOCATION = "asia-northeast3"
-    vertexai.init(project=PROJECT_ID, location=LOCATION)
-
-    model_name = "gemini-1.5-flash-001"
-    model = GenerativeModel(model_name)
-
-    generation_config = {
-        "max_output_tokens": 8192,
-        "temperature": 1,
-        "top_p": 0.95,
-    }
-
-    safety_settings = {
-        generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        generative_models.HarmCategory.HARM_CATEGORY_HARASSMENT: generative_models.HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-    }
-
-    try:
-        response = model.generate_content(
-            [prompt],
-            generation_config=generation_config,
-            safety_settings=safety_settings,
-            #stream=True,
-        )
-
-        print(response.text)
-        return response.text
-    except Exception as e:
-        print(e)
-
-    return None
-
-def generate_avoidance(question):
-    #https://ai.google.dev/api/generate-content?hl=ko#text
-    prompt = prompts.avoidance_prompt + f"""{question}"""
-    print('prompt', prompt)
 
     PROJECT_ID = "samsung-poc-425503"
     LOCATION = "asia-northeast3"
