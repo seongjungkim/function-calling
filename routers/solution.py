@@ -44,48 +44,6 @@ async def solution(request: Request):
     product = session_info["parameters"].get("product")
     print("product", product, ",", "attribute", attribute)
 
-    """
-    From Dialogflow CX
-    {
-        'detectIntentResponseId': '1b7a14c4-3508-4afe-a256-4973d3ee4438', 
-        'intentInfo': {
-            'lastMatchedIntent': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/intents/0adebb70-a727-4687-b8bc-fbbc2ac0b665', 
-            'parameters': {
-                'size': {'originalValue': 'large', 'resolvedValue': 'large'}, 
-                'color': {'originalValue': 'yellow', 'resolvedValue': 'yellow'}
-            }, 
-            'displayName': 'order.new', 
-            'confidence': 0.75953496
-        }, 
-        'pageInfo': {
-            'currentPage': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/flows/00000000-0000-0000-0000-000000000000/pages/ce0b88c4-9292-455c-9c59-ec153dad94cc', 
-            'displayName': 'New Order'
-        }, 
-        'sessionInfo': {
-            'session': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/sessions/48fe0a-4e4-941-b55-b7a2e367a', 
-            'parameters': {'color': 'yellow', 'size': 'large'}
-        }, '
-        fulfillmentInfo': {'tag': 'check order option'}, 
-        'messages': [
-            {
-                'text': {
-                    'text': ["Ok, let's start a new order."], 
-                    'redactedText': ["Ok, let's start a new order."]
-                }, 
-                'responseType': 'ENTRY_PROMPT', 
-                'source': 'VIRTUAL_AGENT'
-            }
-        ], 
-        'text': 'I need a large, yellow shirt', 
-        'languageCode': 'en', 
-        'languageInfo': {
-            'inputLanguageCode': 'en', 
-            'resolvedLanguageCode': 'en', 
-            'confidenceScore': 1.0
-        }
-    }
-    """
-
     PROJECT_ID = "samsung-poc-425503"  # Set to your Project ID
     LOCATION_ID = "global"  # Set to your data store location
     SEARCH_ENGINE_ID = "samsungsvc-html_1721012292828"  # Set to your search app ID
@@ -101,13 +59,12 @@ async def solution(request: Request):
     result = retriever.invoke(query)
     sources = []
     for doc in result:
-        #print(doc)
+        print(doc, type(doc))
         #print('page_content', doc.page_content)
-        print('metadata', doc.metadata)
+        print('metadata', doc.metadata, type(doc.metadata))
         sources.append(doc.metadata.get('source'))
     print('sources', sources)
 
-    message = "Hell World"
     message = "Fulfillment Webhook / Cloud Run / FastAPI"
     fulfillment_response = {
         "fulfillment_response": {
@@ -231,9 +188,9 @@ def check_release_date(question):
 
     prompt = f"""
     당신은 제품 정보를 분석하는 전문 AI입니다.
-    문에서 회사 목록, 제품 모델 목록, 제품 모델별로 출시일의 질문여부, 
+    질문에서 회사 목록, 제품 모델 목록, 제품 모델별로 출시일의 질문여부, 
     답변으로 요구하는 특성이 무엇인지, 삼성전자 제품인지, 삼성전자 이외 제품 포함여부, 민감단어 포함여부, 분류해주세요. 
-    삼성전자 제품이면 대표 모델명으로 변경해 주세요. 예제: ["갤럭시 S24", "S24", "갤럭시 24",  "갤24"] -> "갤럭시 S24"
+    삼성전자 제품이면 대표 모델명으로 변경해 주세요. 예제: ["갤럭시 S24", "S24", "갤럭시 24", "갤S24",  "갤24"] -> "갤럭시 S24"
     
     답변을 다음 key를 가진 JSON 형식으로 만들어주세요.
 
@@ -300,3 +257,46 @@ def generate_avoidance(question):
         print(response.text)
     except Exception as e:
         print(e)
+
+
+"""
+    From Dialogflow CX
+    {
+        'detectIntentResponseId': '1b7a14c4-3508-4afe-a256-4973d3ee4438', 
+        'intentInfo': {
+            'lastMatchedIntent': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/intents/0adebb70-a727-4687-b8bc-fbbc2ac0b665', 
+            'parameters': {
+                'size': {'originalValue': 'large', 'resolvedValue': 'large'}, 
+                'color': {'originalValue': 'yellow', 'resolvedValue': 'yellow'}
+            }, 
+            'displayName': 'order.new', 
+            'confidence': 0.75953496
+        }, 
+        'pageInfo': {
+            'currentPage': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/flows/00000000-0000-0000-0000-000000000000/pages/ce0b88c4-9292-455c-9c59-ec153dad94cc', 
+            'displayName': 'New Order'
+        }, 
+        'sessionInfo': {
+            'session': 'projects/samsung-poc-425503/locations/global/agents/7f1a678c-14c5-432e-8912-963357595441/sessions/48fe0a-4e4-941-b55-b7a2e367a', 
+            'parameters': {'color': 'yellow', 'size': 'large'}
+        }, '
+        fulfillmentInfo': {'tag': 'check order option'}, 
+        'messages': [
+            {
+                'text': {
+                    'text': ["Ok, let's start a new order."], 
+                    'redactedText': ["Ok, let's start a new order."]
+                }, 
+                'responseType': 'ENTRY_PROMPT', 
+                'source': 'VIRTUAL_AGENT'
+            }
+        ], 
+        'text': 'I need a large, yellow shirt', 
+        'languageCode': 'en', 
+        'languageInfo': {
+            'inputLanguageCode': 'en', 
+            'resolvedLanguageCode': 'en', 
+            'confidenceScore': 1.0
+        }
+    }
+"""
