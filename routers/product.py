@@ -61,11 +61,6 @@ async def product(request: Request):
     question = data.get("text")
     print("question", question)
     session_info = data.get("sessionInfo")
-    
-    print("parameters", session_info["parameters"])
-    attribute = session_info["parameters"].get("attribute")
-    product = session_info["parameters"].get("product-temp")
-    print("product", product, ",", "attribute", attribute)
 
     base_prompt = prompts.product_description_prompt
     result = check_prompt(base_prompt, question)
@@ -157,11 +152,6 @@ async def compare_products(request: Request):
     print("question", question)
     session_info = data.get("sessionInfo")
     
-    print("parameters", session_info["parameters"])
-    attribute = session_info["parameters"].get("attribute")
-    product = session_info["parameters"].get("product-temp")
-    print("product", product, ",", "attribute", attribute)
-
     base_prompt = prompts.product_comparison_prompt
     result = check_prompt(base_prompt, question)
     print('result', result, type(result))
