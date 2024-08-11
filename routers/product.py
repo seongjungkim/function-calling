@@ -4,6 +4,7 @@ from fastapi.encoders import jsonable_encoder
 
 import json
 import re
+import os
 
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part, FinishReason
@@ -17,7 +18,7 @@ from langchain_community.retrievers import (
 
 import routers.dummy as dummy
 import routers.prompts as prompts
-import routers.avoidance as avoidance
+import utils.common as common
 
 from utils import bigqueryapi, postgresqlapi
 
@@ -27,8 +28,27 @@ router = APIRouter(
   responses={404: {"description": "Not found"}}
 )
 
+PROJECT_ID = "samsung-poc-425503"
+#REGION = "asia-northeast3"
+REGION = "us-central1"
+
+#model_name = "gemini-1.5-pro-001"
+model_name = "gemini-1.5-flash-001"
+
+SEARCH_LOCATION_ID = "global"  # Set to your data store location
+SEARCH_ENGINE_ID = "samsungsvc-html_1721012292828"  # Set to your search app ID
+DATA_STORE_ID = "samsungsvc-html_1721012095245"  # Set to your data store ID
+#AGENT_ID = "f0cd1f27-d3e9-427c-9f59-fc7bac7a7b1c"
+
+# AlloyDB 연동
+ALLOY_IP="10.40.160.2"
+ALLOY_USER="postgres"
+ALLOY_PASS="tpcg1234"
+ALLOY_PORT="5432"
+ALLOY_NAME="postgres"
+
 @router.post("/")
-async def solution(request: Request):
+async def product(request: Request):
     """
     https://medium.com/google-cloud/building-of-python-webhook-to-integrate-the-cloudsql-database-with-chatbot-in-dialogflow-cx-e6a07c45f6fe
     """
@@ -46,14 +66,9 @@ async def solution(request: Request):
     product = session_info["parameters"].get("product")
     print("product", product, ",", "attribute", attribute)
 
-    PROJECT_ID = "samsung-poc-425503"  # Set to your Project ID
-    LOCATION_ID = "global"  # Set to your data store location
-    SEARCH_ENGINE_ID = "samsungsvc-html_1721012292828"  # Set to your search app ID
-    DATA_STORE_ID = "samsungsvc-html_1721012095245"  # Set to your data store ID
-
     retriever = GoogleVertexAISearchRetriever(
         project_id=PROJECT_ID,
-        location_id=LOCATION_ID,
+        location_id=SEARCH_LOCATION_ID,
         data_store_id=DATA_STORE_ID,
         max_documents=3,
     )
@@ -89,6 +104,10 @@ async def compare_products(request: Request):
     data = await request.json()
     print('data', data)
 
+    intent_info = data.get("intentInfo")
+    intent_name = intent_info.get("displayName") if intent_info else None
+    decision_intent_name = intent_name
+
     tag = data.get("fulfillmentInfo")["tag"]
     question = data.get("text")
     print("question", question)
@@ -105,27 +124,38 @@ async def compare_products(request: Request):
     products = result.get("products", [])
     models = result.get("models", [])
     series = result.get("series", [])
+    """
     comparison_yesno = result.get("comparison_yesno", False)
     description_yesno = result.get("description_yesno", False)
     samsung_product_yesno = result.get("samsung_product_yesno", False)
     other_product_yesno = result.get("othercompany_product_yesno", False)
+    """
+    comparison_yesno = common.get_bool(result.get("comparison_yesno", False))
+    description_yesno = common.get_bool(result.get("description_yesno", False))
+    samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
+    other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
+
     feature = result.get("feature", [])
     method = result.get("method", [])
     print(products, models, series, comparison_yesno, description_yesno, 
         samsung_product_yesno, other_product_yesno, feature)
 
     print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
-    if other_product_yesno == "yes" or \
-        (isinstance(other_product_yesno, bool) and other_product_yesno):
-        avoidance_result = avoidance.generate_avoidance(question)
+    if other_product_yesno == True:
+        decision_intent_name = "avoidance.phrase"
+        message = common.generate_avoidance(question)
+
         print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
-        fulfillment_response = {
-            "fulfillment_response": {
-                "messages": [{"text": {"text": f"{avoidance_result}"}}]
-            },
-            "session_info": session_info,
-            "payload": { "decision_intent": "avoidance.phrase" }
-        }
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    elif comparison_yesno == False:
+        decision_intent_name = "others"
+        message = "Mismatching Intent"
+
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
         print("fulfillment_response", fulfillment_response)
         return fulfillment_response
 
@@ -169,14 +199,6 @@ async def compare_products(request: Request):
         "카메라_언더 디스플레이 카메라 - OIS",
         "카메라_슬로우 모션"]
 
-    # AlloyDB 연동
-    """ """
-    ALLOY_IP="10.40.160.2"
-    ALLOY_USER="postgres"
-    ALLOY_PASS="tpcg1234"
-    ALLOY_PORT="5432"
-    ALLOY_NAME="postgres"
-    """ """
     postgresql_api = postgresqlapi.PostgresqlAPI(
         host=ALLOY_IP, 
         port=ALLOY_PORT, 
@@ -195,14 +217,14 @@ async def compare_products(request: Request):
         try:
             columns = all_columns[feature]
         except KeyError as e:
-            feature = find_similarity_feature(feature, all_columns)
+            feature = common.find_similarity_feature(feature, all_columns)
             columns = all_columns[feature]
     elif isinstance(feature, list):
         for key in feature:
             try:
                 columns = columns + all_columns[key]
             except KeyError as e:
-                key = find_similarity_feature(key, all_columns)
+                key = common.find_similarity_feature(key, all_columns)
                 columns = columns + all_columns[key]
 
     columns.append("시리즈")
@@ -245,16 +267,10 @@ ORDER BY "시리즈"
 
     message = generate_comparison(question, columns, data)
 
-    fulfillment_response = {
-        "fulfillment_response": {
-            "messages": [{"text": {"text": [message]}}]
-        },
-        "session_info": session_info,
-        #"page_info": {"current_page": "1"}, 
-        "payload": { "columns": columns, "rows": rows }
-    }
+    fulfillment_response = common.make_response(message, session_info, 
+                                    intent_name, decision_intent_name,
+                                    columns, rows)
     print('fulfillment_response', fulfillment_response)
-    #return {"message": "Hell World"}
     return fulfillment_response
 
 def check_comparison(question):
@@ -262,18 +278,10 @@ def check_comparison(question):
 
     #https://ai.google.dev/gemini-api/docs/json-mode?hl=ko&lang=python
 
-    PROJECT_ID = "samsung-poc-425503"
-    #LOCATION = "us-central1"
-    LOCATION = "global"
-    REGION = "asia-northeast3"
-    AGENT_ID = "f0cd1f27-d3e9-427c-9f59-fc7bac7a7b1c"
-
     prompt = prompts.comparison_prompt + f"""
     {question}"""
     print('prompt', prompt)
 
-    #model_name = "gemini-1.5-pro-001"
-    model_name = "gemini-1.5-flash-001"
     vertexai.init(project=PROJECT_ID, location=REGION)
     llm = VertexAI(model_name=model_name, max_output_tokens=1000)
     response_text = llm.invoke(
@@ -295,11 +303,8 @@ def generate_comparison(question, columns, data):
     prompt = prompt.replace("##DATA##", "\n".join(data))
     print("Generation Prompt", prompt)
 
-    PROJECT_ID = "samsung-poc-425503"
-    LOCATION = "asia-northeast3"
-    vertexai.init(project=PROJECT_ID, location=LOCATION)
+    vertexai.init(project=PROJECT_ID, location=REGION)
 
-    model_name = "gemini-1.5-flash-001"
     model = GenerativeModel(model_name)
 
     generation_config = {
@@ -329,37 +334,3 @@ def generate_comparison(question, columns, data):
         print(e)
 
     return None
-
-def word2vec(word):
-    from collections import Counter
-    from math import sqrt
-
-    # count the characters in word
-    cw = Counter(word)
-    # precomputes a set of the different characters
-    sw = set(cw)
-    # precomputes the "length" of the word vector
-    lw = sqrt(sum(c*c for c in cw.values()))
-
-    # return a tuple
-    return cw, sw, lw
-
-def cosdis(v1, v2):
-    # which characters are common to the two words?
-    common = v1[1].intersection(v2[1])
-    # by definition of cosine distance we have
-    return sum(v1[0][ch]*v2[0][ch] for ch in common)/v1[2]/v2[2]
-
-def find_similarity_feature(feature, columns):
-    va = word2vec(feature)
-
-    similarity_feature = None
-    max_sim = 0
-    for key in columns.keys():
-        vb = word2vec(key)
-        sim = cosdis(va,vb)
-        print("key", key, sim)
-        max_sim, similarity_feature = (sim, key) if sim > max_sim \
-            else (max_sim, similarity_feature)
-
-    return similarity_feature
