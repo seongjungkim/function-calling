@@ -47,51 +47,95 @@ ALLOY_PASS="tpcg1234"
 ALLOY_PORT="5432"
 ALLOY_NAME="postgres"
 
-@router.post("/")
+@router.post("/description")
 async def product(request: Request):
-    """
-    https://medium.com/google-cloud/building-of-python-webhook-to-integrate-the-cloudsql-database-with-chatbot-in-dialogflow-cx-e6a07c45f6fe
-    """
     print('request', request)
     data = await request.json()
     print('data', data)
 
+    intent_info = data.get("intentInfo")
+    intent_name = intent_info.get("displayName") if intent_info else None
+    decision_intent_name = intent_name
+
     tag = data.get("fulfillmentInfo")["tag"]
-    query = data.get("text")
-    print("query", query)
+    question = data.get("text")
+    print("question", question)
     session_info = data.get("sessionInfo")
     
     print("parameters", session_info["parameters"])
     attribute = session_info["parameters"].get("attribute")
-    product = session_info["parameters"].get("product")
+    product = session_info["parameters"].get("product-temp")
     print("product", product, ",", "attribute", attribute)
 
-    retriever = GoogleVertexAISearchRetriever(
-        project_id=PROJECT_ID,
-        location_id=SEARCH_LOCATION_ID,
-        data_store_id=DATA_STORE_ID,
-        max_documents=3,
-    )
+    base_prompt = prompts.product_description_prompt
+    result = check_prompt(base_prompt, question)
+    print('result', result, type(result))
+    
+    products = result.get("products", [])
+    models = result.get("models", [])
+    series = result.get("series", [])
 
-    result = retriever.invoke(query)
-    sources = []
-    for doc in result:
-        print(doc, type(doc))
-        #print('page_content', doc.page_content)
-        print('metadata', doc.metadata, type(doc.metadata))
-        sources.append(doc.metadata.get('source'))
-    print('sources', sources)
+    comparison_yesno = common.get_bool(result.get("comparison_yesno", False))
+    description_yesno = common.get_bool(result.get("description_yesno", False))
+    samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
+    other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
 
-    message = "Fulfillment Webhook / Cloud Run / FastAPI"
-    fulfillment_response = {
-        "fulfillment_response": {
-            "messages": [{"text": {"text": [message]}}]
-        },
-        "session_info": session_info,
-        "page_info": {"current_page": "1"}, 
-        "payload": { "display": "payload test", "sources": sources }
-    }
-    #return {"message": "Hell World"}
+    features = result.get("features", [])
+    features = [features] if isinstance(features, str) else features
+    features = [x for x in features if x not in ["기능"]]
+    method = result.get("method", [])
+    print(products, models, series, comparison_yesno, description_yesno, 
+        samsung_product_yesno, other_product_yesno, features)
+
+    print("other_product_yesno", other_product_yesno, type(other_product_yesno))
+    if other_product_yesno == True:
+        # 타사제품이 포함되어 있는 경우
+        decision_intent_name = "avoidance.phrase"
+        message = common.generate_avoidance(question)
+
+        print("other_product_yesno", other_product_yesno, type(other_product_yesno))
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    elif comparison_yesno == True and description_yesno == False:
+        # 설명이 아니지만 비교 하는 경우
+        decision_intent_name = "product.comparison"
+        message = "Mismatching Intent"
+
+        columns, rows, data = query_spec(products, models, features)
+        message = generate_product(question, columns, data)
+
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name,
+                                        columns=columns, rows=rows)
+        
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    elif (len(products) == 0 and len(models) == 0) or \
+        len(features) == 0:
+        # 비교제품 또는 모델, 특성이 없는 경우
+        decision_intent_name = "others"
+        message = "Mismatching Intent"
+
+        print('products', products)
+        print('models', models)
+        print('features', features)
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    
+    columns, rows, data = query_spec(products, models, features)
+
+    message = "Fulfillment Webhook / Product Description"
+    message = generate_product(question, columns, data)
+
+    fulfillment_response = common.make_response(message, session_info, 
+                                    intent_name, decision_intent_name,
+                                    columns=columns, rows=rows)
+    print('fulfillment_response', fulfillment_response)
+    
     return fulfillment_response
 
 
@@ -118,7 +162,8 @@ async def compare_products(request: Request):
     product = session_info["parameters"].get("product-temp")
     print("product", product, ",", "attribute", attribute)
 
-    result = check_comparison(question)
+    base_prompt = prompts.product_comparison_prompt
+    result = check_prompt(base_prompt, question)
     print('result', result, type(result))
     
     products = result.get("products", [])
@@ -135,13 +180,14 @@ async def compare_products(request: Request):
     samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
     other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
 
-    feature = result.get("feature", [])
+    features = result.get("features", [])
     method = result.get("method", [])
     print(products, models, series, comparison_yesno, description_yesno, 
-        samsung_product_yesno, other_product_yesno, feature)
+        samsung_product_yesno, other_product_yesno, features)
 
     print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
     if other_product_yesno == True:
+        # 타사제품이 포함되어 있는 경우
         decision_intent_name = "avoidance.phrase"
         message = common.generate_avoidance(question)
 
@@ -150,7 +196,23 @@ async def compare_products(request: Request):
                                         intent_name, decision_intent_name)
         print("fulfillment_response", fulfillment_response)
         return fulfillment_response
-    elif comparison_yesno == False:
+    elif comparison_yesno == False and description_yesno == True:
+        # 비교는 아니지만 설명을 하는 경우
+        decision_intent_name = "galaxy.query"
+        message = "Mismatching Intent"
+
+        columns, rows, data = query_spec(products, models, features)
+        message = generate_product(question, columns, data)
+
+        fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name,
+                                        columns=columns, rows=rows)
+        
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    elif comparison_yesno == False or \
+        (len(products) == 0 and len(models) == 0):
+        # 비교가 아니거나 비교제품 또는 모델이 없는 경우
         decision_intent_name = "others"
         message = "Mismatching Intent"
 
@@ -159,6 +221,40 @@ async def compare_products(request: Request):
         print("fulfillment_response", fulfillment_response)
         return fulfillment_response
 
+    columns, rows, data = query_spec(products, models, features)
+
+    message = "Fulfillment Webhook / Product Comparison"
+    message = generate_product(question, columns, data)
+
+    fulfillment_response = common.make_response(message, session_info, 
+                                    intent_name, decision_intent_name,
+                                    columns=columns, rows=rows)
+    print('fulfillment_response', fulfillment_response)
+    return fulfillment_response
+
+def check_prompt(base_prompt, question):
+    from mdextractor import extract_md_blocks
+
+    #https://ai.google.dev/gemini-api/docs/json-mode?hl=ko&lang=python
+
+    prompt = base_prompt + f"""
+    {question}"""
+    print('prompt', prompt)
+
+    vertexai.init(project=PROJECT_ID, location=REGION)
+    llm = VertexAI(model_name=model_name, max_output_tokens=1000)
+    response_text = llm.invoke(
+        prompt 
+    )
+    print('response_text', response_text)
+
+    blocks = extract_md_blocks(response_text)
+    print('response_text', blocks[0], type(blocks[0]))
+    json_obj = json.loads(blocks[0])
+    print('json_obj', json_obj, type(json_obj))
+    return json_obj
+
+def query_spec(products, models, feature):
     all_columns = {
     "S펜": ["S펜 지원"],
     "센서": ["센서"],
@@ -235,7 +331,7 @@ async def compare_products(request: Request):
     print('models', '","'.join(models))
     #series = []
     #models = []
-    """라인업,시리즈,상품명,모델코드"""
+    #라인업,시리즈,상품명,모델코드
     query = f"""SELECT
     DISTINCT "{'","'.join(columns)}"
 FROM
@@ -257,47 +353,16 @@ ORDER BY "시리즈"
     rows = postgresql_api.query_all(query)
     #print(rows, type(rows))
 
-    message = "Fulfillment Webhook / Product Comparison"
     data = []
     for row in rows:
         #print(row)
-        #model, release_date = row
-        #dict = {"model": model, "release_date": release_date}
         data.append(','.join(row))
 
-    message = generate_comparison(question, columns, data)
+    return columns, rows, data
 
-    fulfillment_response = common.make_response(message, session_info, 
-                                    intent_name, decision_intent_name,
-                                    columns, rows)
-    print('fulfillment_response', fulfillment_response)
-    return fulfillment_response
-
-def check_comparison(question):
-    from mdextractor import extract_md_blocks
-
-    #https://ai.google.dev/gemini-api/docs/json-mode?hl=ko&lang=python
-
-    prompt = prompts.comparison_prompt + f"""
-    {question}"""
-    print('prompt', prompt)
-
-    vertexai.init(project=PROJECT_ID, location=REGION)
-    llm = VertexAI(model_name=model_name, max_output_tokens=1000)
-    response_text = llm.invoke(
-        prompt 
-    )
-    print('response_text', response_text)
-
-    blocks = extract_md_blocks(response_text)
-    print('response_text', blocks[0], type(blocks[0]))
-    json_obj = json.loads(blocks[0])
-    print('json_obj', json_obj, type(json_obj))
-    return json_obj
-
-def generate_comparison(question, columns, data):
+def generate_product(question, columns, data):
     #https://ai.google.dev/api/generate-content?hl=ko#text
-    prompt = prompts.comparison_generation_prompt
+    prompt = prompts.product_generation_prompt
     prompt = prompt.replace("##QUESTION##", question)
     prompt = prompt.replace("##COLUMNS##", ",".join(columns))
     prompt = prompt.replace("##DATA##", "\n".join(data))

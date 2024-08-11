@@ -95,7 +95,7 @@ def make_response(message, session_info, intent_name, decision_intent_name,
                   columns=[], rows=[], sources=[], models=[]):
     fulfillment_response = {
         "fulfillment_response": {
-            "messages": [{"text": {"text": message}}]
+            "messages": [{"text": {"text": [message]}}]
         },
         "session_info": session_info,
         "payload": {
