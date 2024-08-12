@@ -73,7 +73,7 @@ async def product(request: Request):
     comparison_yesno = common.get_bool(result.get("comparison_yesno", False))
     description_yesno = common.get_bool(result.get("description_yesno", False))
     samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
-    other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
+    other_product_yesno = common.get_bool(result.get("competitors_product_yesno", False))
 
     features = result.get("features", [])
     features = [features] if isinstance(features, str) else features
@@ -99,6 +99,11 @@ async def product(request: Request):
         message = "Mismatching Intent"
 
         columns, rows, data = query_spec(products, models, features)
+        if len(columns) == 0 or data == None:
+            fulfillment_response = generate_others(intent_name, session_info)
+            print("fulfillment_response", fulfillment_response)
+            return fulfillment_response
+        
         message = generate_product(question, columns, data)
 
         fulfillment_response = common.make_response(message, session_info, 
@@ -109,19 +114,19 @@ async def product(request: Request):
         return fulfillment_response
     elif (len(products) == 0 and len(models) == 0) or \
         len(features) == 0:
-        # 비교제품 또는 모델, 특성이 없는 경우
-        decision_intent_name = "others"
-        message = "Mismatching Intent"
+        fulfillment_response = generate_others(intent_name, session_info)
 
         print('products', products)
         print('models', models)
         print('features', features)
-        fulfillment_response = common.make_response(message, session_info, 
-                                        intent_name, decision_intent_name)
         print("fulfillment_response", fulfillment_response)
         return fulfillment_response
     
     columns, rows, data = query_spec(products, models, features)
+    if len(columns) == 0 or data == None:
+        fulfillment_response = generate_others(intent_name, session_info)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
 
     message = "Fulfillment Webhook / Product Description"
     message = generate_product(question, columns, data)
@@ -163,25 +168,25 @@ async def compare_products(request: Request):
     comparison_yesno = result.get("comparison_yesno", False)
     description_yesno = result.get("description_yesno", False)
     samsung_product_yesno = result.get("samsung_product_yesno", False)
-    other_product_yesno = result.get("othercompany_product_yesno", False)
+    other_product_yesno = result.get("competitors_product_yesno", False)
     """
     comparison_yesno = common.get_bool(result.get("comparison_yesno", False))
     description_yesno = common.get_bool(result.get("description_yesno", False))
     samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
-    other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
+    other_product_yesno = common.get_bool(result.get("competitors_product_yesno", False))
 
     features = result.get("features", [])
     method = result.get("method", [])
     print(products, models, series, comparison_yesno, description_yesno, 
         samsung_product_yesno, other_product_yesno, features)
 
-    print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
+    print("competitors_product_yesno", other_product_yesno, type(other_product_yesno))
     if other_product_yesno == True:
         # 타사제품이 포함되어 있는 경우
         decision_intent_name = "avoidance.phrase"
         message = common.generate_avoidance(question)
 
-        print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
+        print("competitors_product_yesno", other_product_yesno, type(other_product_yesno))
         fulfillment_response = common.make_response(message, session_info, 
                                         intent_name, decision_intent_name)
         print("fulfillment_response", fulfillment_response)
@@ -192,6 +197,11 @@ async def compare_products(request: Request):
         message = "Mismatching Intent"
 
         columns, rows, data = query_spec(products, models, features)
+        if len(columns) == 0 or data == None:
+            fulfillment_response = generate_others(intent_name, session_info)
+            print("fulfillment_response", fulfillment_response)
+            return fulfillment_response
+        
         message = generate_product(question, columns, data)
 
         fulfillment_response = common.make_response(message, session_info, 
@@ -202,16 +212,15 @@ async def compare_products(request: Request):
         return fulfillment_response
     elif comparison_yesno == False or \
         (len(products) == 0 and len(models) == 0):
-        # 비교가 아니거나 비교제품 또는 모델이 없는 경우
-        decision_intent_name = "others"
-        message = "Mismatching Intent"
-
-        fulfillment_response = common.make_response(message, session_info, 
-                                        intent_name, decision_intent_name)
+        fulfillment_response = generate_others(intent_name, session_info)
         print("fulfillment_response", fulfillment_response)
         return fulfillment_response
 
     columns, rows, data = query_spec(products, models, features)
+    if len(columns) == 0 or data == None:
+        fulfillment_response = generate_others(intent_name, session_info)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
 
     message = "Fulfillment Webhook / Product Comparison"
     message = generate_product(question, columns, data)
@@ -244,7 +253,53 @@ def check_prompt(base_prompt, question):
     print('json_obj', json_obj, type(json_obj))
     return json_obj
 
-def query_spec(products, models, feature):
+def check_columns(all_columns, features):
+    columns = []
+    if isinstance(features, str):
+        if features == "외관" or features == "무게":
+            columns.append("기본")
+            columns.append("외관")
+            return columns
+        
+        if features in all_columns:
+            columns.append(features)
+        else:
+            print('key', features, 'similarity')
+            feature = common.find_similarity_feature(features, all_columns)
+            if feature:
+                columns.append(feature)
+    elif isinstance(features, list) and len(features) == 0:
+        for key in all_columns.keys():
+            #전체에서 제외되는 항목 (비교대상이 너무 많아서)
+            if key in ["운영체제", "기본", "네트워크", "서비스", "센서", "연결", "오디오/비디오"]:
+                continue
+
+            if key in all_columns:
+                columns.append(key)
+            else:
+                print('key', key, 'similarity')
+                feature = common.find_similarity_feature(key, all_columns)
+                if feature:
+                    columns.append(feature)
+    elif isinstance(features, list):
+        for key in features:
+            if key == "외관" or key == "무게":
+                columns.append("기본")
+                columns.append("외관")
+                continue
+
+            if key in all_columns:
+                columns.append(key)
+            else:
+                print('key', key, 'similarity')
+                feature = common.find_similarity_feature(key, all_columns)
+                if feature:
+                    columns.append(feature)
+    
+    return columns
+
+
+def query_spec(products, models, features):
     all_columns = {
     "S펜": ["S펜 지원"],
     "센서": ["센서"],
@@ -292,35 +347,25 @@ def query_spec(products, models, feature):
         password=ALLOY_PASS, 
         dbname=ALLOY_NAME)
     
+    keys = check_columns(all_columns, features)
+    print('keys', keys, type(keys))
+    if len(keys) == 0:
+        return keys, None, None
+    
     columns = []
-    if len(feature) == 0:
-        for key in all_columns.keys():
-            #print(key)
-            if key in ["운영체제", "기본", "네트워크", "서비스", "센서", "연결", "오디오/비디오"]:
-                continue
-            columns = columns + all_columns[key]
-    elif isinstance(feature, str):
-        try:
-            columns = all_columns[feature]
-        except KeyError as e:
-            feature = common.find_similarity_feature(feature, all_columns)
-            columns = all_columns[feature]
-    elif isinstance(feature, list):
-        for key in feature:
-            try:
-                columns = columns + all_columns[key]
-            except KeyError as e:
-                key = common.find_similarity_feature(key, all_columns)
-                columns = columns + all_columns[key]
+    for key in keys:
+        columns = columns + all_columns[key]
 
-    columns.append("시리즈")
+    #columns.append("시리즈")
+    columns.insert(0, "시리즈")
     if len(models) > 0: 
-        columns.append("모델코드")
+        #columns.append("모델코드")
+        columns.insert(1, "모델코드")
+    
     print('columns', '","'.join(columns))
     print("products", '","'.join(products))
     print('models', '","'.join(models))
-    #series = []
-    #models = []
+
     #라인업,시리즈,상품명,모델코드
     query = f"""SELECT
     DISTINCT "{'","'.join(columns)}"
@@ -344,11 +389,25 @@ ORDER BY "시리즈"
     #print(rows, type(rows))
 
     data = []
+    series_list = []
     for row in rows:
         #print(row)
+        series = row[0]
+        cnt = sum(series in s for s in data)
+        if len(columns) > 20 and cnt >= 2: continue
         data.append(','.join(row))
 
     return columns, rows, data
+
+def generate_others(intent_name, session_info):
+    # 비교가 아니거나 비교제품 또는 모델이 없는 경우
+    decision_intent_name = "others"
+    message = "Mismatching Intent"
+
+    fulfillment_response = common.make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
+    print("fulfillment_response", fulfillment_response)
+    return fulfillment_response
 
 def generate_product(question, columns, data):
     #https://ai.google.dev/api/generate-content?hl=ko#text

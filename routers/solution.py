@@ -64,11 +64,6 @@ async def solution(request: Request):
     print("question", question)
     session_info = data.get("sessionInfo")
     
-    print("parameters", session_info["parameters"])
-    attribute = session_info["parameters"].get("attribute")
-    product = session_info["parameters"].get("product")
-    print("product", product, ",", "attribute", attribute)
-
     retriever = GoogleVertexAISearchRetriever(
         project_id=PROJECT_ID,
         location_id=SEARCH_LOCATION_ID,
@@ -110,28 +105,17 @@ async def get_release_date(request: Request):
     print("question", question)
     session_info = data.get("sessionInfo")
     
-    print("parameters", session_info["parameters"])
-    attribute = session_info["parameters"].get("attribute")
-    product = session_info["parameters"].get("product-temp")
-    print("product", product, ",", "attribute", attribute)
-
     result = check_release_date(question)
     print('result', result, type(result))
     
     companies = result.get("companies")
     models = result["models"]
     samsung_models = result["samsung_models"]
-    othercompany_models = result["othercompany_models"]
+    othercompany_models = result["competitors_models"]
 
-    """
-    release_date_yesno = result["release_date_yesno"]
-    samsung_product_yesno = result["samsung_product_yesno"]
-    othercompany_product_yesno = result["othercompany_product_yesno"]
-    sensitive_words_yesno = result["sensitive_words_yesno"]
-    """
     release_date_yesno = common.get_bool(result.get("release_date_yesno", False))
     samsung_product_yesno = common.get_bool(result.get("samsung_product_yesno", False))
-    other_product_yesno = common.get_bool(result.get("othercompany_product_yesno", False))
+    other_product_yesno = common.get_bool(result.get("competitors_product_yesno", False))
     sensitive_words_yesno = common.get_bool(result.get("sensitive_words_yesno", False))
     required_feature = result["required_feature"]
 
@@ -142,7 +126,7 @@ async def get_release_date(request: Request):
         decision_intent_name = "avoidance.phrase"
         message = common.generate_avoidance(question)
 
-        print("othercompany_product_yesno", other_product_yesno, type(other_product_yesno))
+        print("competitors_product_yesno", other_product_yesno, type(other_product_yesno))
         fulfillment_response = common.make_response(message, session_info, 
                                         intent_name, decision_intent_name)
         print("fulfillment_response", fulfillment_response)
