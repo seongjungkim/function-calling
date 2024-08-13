@@ -92,7 +92,8 @@ def get_bool(variable):
     return False
 
 def make_response(message, session_info, intent_name, decision_intent_name, 
-                  columns=[], rows=[], sources=[], models=[]):
+                  columns=[], rows=[], sources=[], models=[], 
+                  html=None, url=None):
     fulfillment_response = {
         "fulfillment_response": {
             "messages": [{"text": {"text": [message]}}]
@@ -104,10 +105,22 @@ def make_response(message, session_info, intent_name, decision_intent_name,
             "columns": columns,
             "rows": rows,
             "sources": sources,
-            "models": models 
+            "models": models,
+            "html": html,
+            "url": url
         }
     }
 
+    return fulfillment_response
+
+def generate_others(intent_name, session_info):
+    # 비교가 아니거나 비교제품 또는 모델이 없는 경우
+    decision_intent_name = "others"
+    message = "Mismatching Intent"
+
+    fulfillment_response = make_response(message, session_info, 
+                                        intent_name, decision_intent_name)
+    print("fulfillment_response", fulfillment_response)
     return fulfillment_response
 
 

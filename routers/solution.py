@@ -2,8 +2,13 @@ from fastapi import APIRouter, Request, Depends, Form, HTTPException
 from fastapi.responses import Response, JSONResponse
 from fastapi.encoders import jsonable_encoder
 
+import codecs
 import json
+import os
 import re
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from google.cloud import storage
 
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part, FinishReason
@@ -80,10 +85,21 @@ async def solution(request: Request):
         sources.append(doc.metadata.get('source'))
     print('sources', sources)
 
-    message = "Fulfillment Webhook / Cloud Run / FastAPI"
+    if len(sources) == 0:
+        fulfillment_response = common.generate_others(intent_name, session_info)
+        print("fulfillment_response", fulfillment_response)
+        return fulfillment_response
+    
+    simple_response_msg, div_html, svc_num = parse_html(sources[0])
+    url = f"https://www.samsungsvc.co.kr/solution/{svc_num}"
+    print(simple_response_msg, div_html, svc_num)
+
+    message = simple_response_msg
     fulfillment_response = common.make_response(message, session_info,
                                     intent_name, decision_intent_name,
-                                    sources=sources)
+                                    sources=sources,
+                                    html=div_html,
+                                    url=url)
     return fulfillment_response
 
 
@@ -202,3 +218,50 @@ def check_release_date(question):
     json_obj = json.loads(blocks[0])
     print('json_obj', json_obj, type(json_obj))
     return json_obj
+
+def parse_html(gcs_path):
+    url = gcs_path
+    url_path = urlparse(url)
+    print(url_path.scheme, url_path.netloc, url_path.path)
+
+    svc_num = None
+    div_html = None
+    heading_html_text = None
+    if url_path.scheme == "gs":
+        solution_file = os.path.basename(url_path.path)
+        print("Solution number", solution_file)
+        svc_num = solution_file.replace(".html", "")
+        download_blob(url_path.netloc, url_path.path[1:], solution_file)
+
+        with codecs.open(solution_file, "r", encoding='utf-8') as f:
+            htmlString = f.read()
+            htmlString = re.sub(' +', ' ', htmlString)
+            document = BeautifulSoup(htmlString, 'html.parser')
+            #print('document', document, type(document))
+            #document = document.prettify()
+            #print('document', document, type(document))
+            main_html = document.find('main')
+            #print(main_html)
+            heading_html_text = main_html.find('h1').getText()
+            #print(heading_html_text)
+            div_html = main_html.find('div', attrs={"class":"sec-box page-cont"})
+            div_html = div_html.prettify()
+            #print(div_html, type(div_html))
+    
+    return heading_html_text, div_html, svc_num
+
+def download_blob(bucket_name, source_blob_name, destination_file_name):
+    #Downloads a blob from the bucket.
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+
+    # Construct a client side representation of a blob.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
+
+    print(
+        "Downloaded storage object {} from bucket {} to local file {}.".format(
+            source_blob_name, bucket_name, destination_file_name
+        )
+    )

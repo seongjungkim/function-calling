@@ -373,6 +373,7 @@ FROM
     pivot_spec_s23
 WHERE
     {("--" if len(products) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(products)}%'
+    {("AND" if len(products) > 0 and len(models) > 0 else "")}
     {("--" if len(models) == 0 else "")}"모델코드" IN ('{"','".join(models)}')
 UNION
 SELECT
@@ -381,6 +382,7 @@ FROM
     pivot_spec_s24
 WHERE
     {("--" if len(products) == 0 else "")}"시리즈" SIMILAR TO '%{'%|%'.join(products)}%'
+    {("AND" if len(products) > 0 and len(models) > 0 else "")}
     {("--" if len(models) == 0 else "")}"모델코드" IN ('{"','".join(models)}')
 ORDER BY "시리즈"
 """
